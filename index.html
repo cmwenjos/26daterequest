@@ -446,6 +446,14 @@
     <!-- VIEW 3: RECIPIENT INVITE VIEW (NO LOGIN + 60S EVASIVE "NO" BUTTON)  -->
     <!-- =================================================================== -->
     <section id="view-recipient" class="hidden max-w-xl mx-auto">
+      <div class="mb-3 flex items-center justify-between">
+        <button type="button" onclick="navigateTo('home')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 text-xs font-bold shadow-sm transition">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Back to Home</span>
+        </button>
+        <span class="text-[11px] font-semibold text-slate-400">Recipient RSVP Preview</span>
+      </div>
+
       <div class="glass-card rounded-[2rem] p-6 sm:p-9 shadow-soft border-2 border-blush-300 relative overflow-hidden">
         <div class="flex items-center justify-between gap-2 mb-4">
           <span id="rec-badge" class="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-blush-500">Romantic Dinner</span>
@@ -597,10 +605,16 @@
           <span class="text-xs font-bold uppercase tracking-wider text-blush-600">nexastudio Master Control</span>
           <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Master Admin Dashboard</h2>
         </div>
-        <button type="button" onclick="openModal('modal-admin-create-user')" class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow flex items-center gap-2">
-          <i data-lucide="user-plus" class="w-4 h-4 text-blush-400"></i>
-          <span>Create User Login & Grant Access</span>
-        </button>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button type="button" onclick="switchAdminToClientView()" class="px-4 py-3 rounded-2xl bg-blush-100 hover:bg-blush-200 text-blush-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+            <i data-lucide="eye" class="w-4 h-4 text-blush-600"></i>
+            <span>Switch to Client View</span>
+          </button>
+          <button type="button" onclick="openModal('modal-admin-create-user')" class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow flex items-center gap-2">
+            <i data-lucide="user-plus" class="w-4 h-4 text-blush-400"></i>
+            <span>Create User Login & Grant Access</span>
+          </button>
+        </div>
       </div>
 
       <!-- Admin KPI Grid -->
@@ -772,7 +786,12 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Create Your Login Passcode *</label>
-          <input id="reg-passcode" type="text" required minlength="4" placeholder="e.g., 4829 or love254" class="w-full px-4 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+          <div class="relative">
+            <input id="reg-passcode" type="password" required minlength="4" placeholder="e.g., 4829 or love254" class="w-full pl-4 pr-11 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+            <button type="button" onclick="togglePasscodeVisibility('reg-passcode', this)" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-blush-600" title="Show/Hide Passcode">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Mandatory Terms & Policies Checkbox -->
@@ -806,7 +825,12 @@
             <label class="block text-xs font-bold text-slate-700">Passcode *</label>
             <button type="button" onclick="switchAuthMode('forgot')" class="text-[11px] font-bold text-blush-600 hover:underline">Forgot passcode?</button>
           </div>
-          <input id="login-passcode" type="password" required placeholder="Enter your passcode" class="w-full px-4 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+          <div class="relative">
+            <input id="login-passcode" type="password" required placeholder="Enter your passcode" class="w-full pl-4 pr-11 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+            <button type="button" onclick="togglePasscodeVisibility('login-passcode', this)" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-blush-600" title="Show/Hide Passcode">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white font-bold shadow-soft transition">
@@ -963,7 +987,12 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Set Login Passcode</label>
-          <input id="adm-new-passcode" type="text" required placeholder="e.g., 2580" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono" />
+          <div class="relative">
+            <input id="adm-new-passcode" type="password" required placeholder="e.g., 2580" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm font-mono" />
+            <button type="button" onclick="togglePasscodeVisibility('adm-new-passcode', this)" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-blush-600" title="Show/Hide Passcode">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Assign Access Plan</label>
@@ -1212,6 +1241,30 @@
       openModal('modal-pricing');
     }
 
+    function togglePasscodeVisibility(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      const isPassword = inp.type === 'password';
+      inp.type = isPassword ? 'text' : 'password';
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function switchAdminToClientView() {
+      appState.adminPreviewClient = true;
+      updateNavbar();
+      navigateTo('home');
+      showToast('Switched to Client View. Click "Back to Master Admin" anytime to return.', 'pink');
+    }
+
+    function returnToMasterAdmin() {
+      appState.adminPreviewClient = false;
+      updateNavbar();
+      navigateTo('admin');
+    }
+
     // -------------------------------------------------------------------------
     // 4. NAVIGATION, STRICT AUTH GATE & UNIFIED SIGN-IN (CLIENT + ADMIN)
     // -------------------------------------------------------------------------
@@ -1225,15 +1278,34 @@
       if (!navActions) return;
 
       if (appState.isAdminAuthenticated) {
-        navActions.innerHTML = `
-          <button type="button" onclick="navigateTo('admin')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blush-400"></i>
-            <span>Master Admin</span>
-          </button>
-          <button type="button" onclick="logoutUser()" class="px-3 py-2 rounded-xl bg-blush-100 hover:bg-blush-200 text-blush-700 text-xs font-bold transition">
-            Sign Out
-          </button>
-        `;
+        if (appState.adminPreviewClient) {
+          navActions.innerHTML = `
+            <button type="button" onclick="openPricingModal()" class="hidden sm:inline-flex px-3 py-2 rounded-xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 text-xs font-bold transition">
+              Pricing
+            </button>
+            <button type="button" onclick="navigateTo('studio')" class="px-3 py-2 rounded-xl bg-blush-600 hover:bg-blush-700 text-white text-xs font-bold shadow-sm transition">
+              Studio Preview
+            </button>
+            <button type="button" onclick="returnToMasterAdmin()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blush-400"></i>
+              <span>Back to Master Admin</span>
+            </button>
+          `;
+        } else {
+          navActions.innerHTML = `
+            <button type="button" onclick="switchAdminToClientView()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 text-xs font-bold flex items-center gap-1.5 transition">
+              <i data-lucide="eye" class="w-3.5 h-3.5 text-blush-500"></i>
+              <span>Client View</span>
+            </button>
+            <button type="button" onclick="navigateTo('admin')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blush-400"></i>
+              <span>Master Admin</span>
+            </button>
+            <button type="button" onclick="logoutUser()" class="px-3 py-2 rounded-xl bg-blush-100 hover:bg-blush-200 text-blush-700 text-xs font-bold transition">
+              Sign Out
+            </button>
+          `;
+        }
       } else if (appState.currentUser) {
         const user = appState.users.find(u => u.id === appState.currentUser.id) || appState.currentUser;
         appState.currentUser = user;
