@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlushRSVP — Date & Hangout Requestor by nexastudio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blush: {
+              50: '#FFF5F7',
+              100: '#FFE4EC',
+              200: '#FECDD9',
+              300: '#FDA4BA',
+              400: '#FB7195',
+              500: '#FF4D79',
+              600: '#E11D48',
+              700: '#BE123C',
+              800: '#9F1239',
+              900: '#881337'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          },
+          boxShadow: {
+            soft: '0 10px 30px -5px rgba(255, 77, 121, 0.16)',
+            card: '0 8px 24px -4px rgba(136, 19, 55, 0.08)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #FFF5F7;
+      background-image: radial-gradient(circle at 12% 10%, #FFE4EC 0%, transparent 40%),
+                        radial-gradient(circle at 88% 85%, #FFE4EC 0%, transparent 45%);
+      min-height: 100vh;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(254, 205, 217, 0.75);
+    }
+
+    /* Smooth button dodge transition */
+    #evasive-no-btn, #home-demo-no-btn {
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.22s ease, top 0.22s ease, background-color 0.2s ease;
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-blush-200 selection:text-blush-900">
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-blush-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <!-- Brand Logo -->
+      <button type="button" onclick="navigateTo('home')" class="flex items-center gap-2.5 text-left group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blush-400 to-blush-600 flex items-center justify-center text-white shadow-soft group-hover:scale-105 transition">
+          <i data-lucide="heart" class="w-5 h-5 fill-white"></i>
+        </div>
+        <div>
+          <span class="font-serif text-xl font-bold tracking-tight text-blush-800">BlushRSVP</span>
+          <span class="hidden sm:inline-block ml-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blush-100 text-blush-700">Kenya</span>
+        </div>
+      </button>
+
+      <!-- Dynamic Navigation Actions -->
+      <nav id="nav-actions" class="flex items-center gap-2 sm:gap-3">
+        <!-- Populated dynamically via updateNavbar() -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+    <!-- =================================================================== -->
+    <!-- VIEW 1: LANDING & INTERACTIVE HOME SCREEN DEMO                      -->
+    <!-- =================================================================== -->
+    <section id="view-home" class="space-y-12">
+      <!-- Hero Section -->
+      <div class="text-center max-w-3xl mx-auto pt-2 sm:pt-4">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blush-100 border border-blush-200 text-blush-700 text-xs font-bold mb-5 shadow-sm">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blush-500"></i>
+          <span>Dates • Bestie Hangouts • Family Meetups • Funny "No" Button</span>
+        </div>
+        <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 leading-tight mb-5">
+          Ask Them Out in a Way They <span class="text-transparent bg-clip-text bg-gradient-to-r from-blush-500 to-blush-700 italic">Can’t Refuse.</span>
+        </h1>
+        <p class="text-base sm:text-lg text-slate-600 leading-relaxed mb-8 max-w-2xl mx-auto">
+          Create a custom aesthetic invite link in 60 seconds. Watch the <strong class="text-blush-600">"No"</strong> button playfully dodge their cursor for the first 1 minute—and once they say <strong class="text-blush-600">"Yes"</strong>, it syncs to Google Calendar & WhatsApp automatically!
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <button type="button" onclick="handleStartCreating()" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white font-bold shadow-soft hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+            <span>Sign In & Create Invite</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+          <button type="button" onclick="openPricingModal()" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 font-semibold shadow-card transition flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-blush-500"></i>
+            <span>View Plans (From 50 SHS)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE LIVE RECIPIENT DEMO RIGHT ON HOME SCREEN -->
+      <div class="max-w-xl mx-auto">
+        <div class="text-center mb-4">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-blush-200 text-blush-700 text-xs font-bold shadow-sm">
+            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-blush-500"></i>
+            <span>Live Interactive Demo — Try Clicking "No" Below!</span>
+          </span>
+        </div>
+
+        <div class="glass-card rounded-[2rem] p-6 sm:p-8 shadow-soft border-2 border-blush-400 relative overflow-hidden">
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <span class="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-blush-500">Romantic Dinner</span>
+            <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-blush-50 text-blush-700 border border-blush-200">
+              24h Invite Link Preview
+            </span>
+          </div>
+
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+            Hey <span class="text-blush-600">Wanjiku</span>! Personal Invite From <span class="text-blush-600">Kevin</span>
+          </p>
+          <div class="text-4xl my-2">🕯️</div>
+          <h3 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+            Friday Rooftop Dinner & Dessert?
+          </h3>
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
+            I already picked the table and promised not to check my phone. Say yes so we can lock it into Google Calendar!
+          </p>
+
+          <div class="rounded-2xl bg-blush-50/90 border border-blush-100 p-3.5 space-y-2 mb-5 text-xs text-slate-700">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar-heart" class="w-4 h-4 text-blush-500 shrink-0"></i>
+              <span><strong>Friday</strong> • 7:30 PM (or pick your slot)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-blush-500 shrink-0"></i>
+              <span><strong>Artcaffe Oval, Westlands, Nairobi</strong></span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-2 text-xs font-semibold text-blush-700 bg-blush-100/80 py-1.5 px-3.5 rounded-full w-fit mx-auto mb-2">
+            <i data-lucide="timer" class="w-3.5 h-3.5 text-blush-500 animate-pulse"></i>
+            <span id="home-demo-timer-text">"No" button dodges cursor for 60s...</span>
+          </div>
+          <p id="home-demo-taunt" class="text-center text-xs font-bold text-blush-600 h-4 mb-2"></p>
+
+          <div id="home-demo-arena" class="relative w-full min-h-[104px] rounded-2xl bg-blush-50/50 border border-dashed border-blush-200 flex items-center justify-center p-3">
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <button type="button" onclick="triggerHomeDemoYes()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 text-white font-extrabold text-sm shadow-soft hover:scale-105 transition flex items-center gap-1.5 z-10">
+                <span>Yes, Count Me In!</span>
+                <i data-lucide="heart" class="w-4 h-4 fill-white"></i>
+              </button>
+              <button id="home-demo-no-btn" type="button" class="px-5 py-3 rounded-2xl bg-white text-slate-600 font-bold text-sm border border-slate-300 shadow-sm z-20">
+                No
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-blush-100 flex items-center justify-between text-xs">
+            <button type="button" onclick="launchDemoRecipientInvite()" class="text-blush-600 font-bold hover:underline flex items-center gap-1">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              <span>Open Full Recipient Flow</span>
+            </button>
+            <button type="button" onclick="resetHomeDemoTimer()" class="text-slate-500 hover:text-blush-600 font-semibold">
+              Restart 60s Demo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works Mini Strip -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+        <div class="glass-card rounded-3xl p-6 shadow-card">
+          <div class="w-11 h-11 rounded-2xl bg-blush-100 text-blush-600 flex items-center justify-center font-bold mb-4">1</div>
+          <h3 class="font-serif text-lg font-bold text-slate-900 mb-1.5">Sign In & Pick a Pass</h3>
+          <p class="text-sm text-slate-600">Register with your email & Kenyan WhatsApp, accept policies, and pay via PesaPal (50, 200, or 500 SHS).</p>
+        </div>
+        <div class="glass-card rounded-3xl p-6 shadow-card">
+          <div class="w-11 h-11 rounded-2xl bg-blush-100 text-blush-600 flex items-center justify-center font-bold mb-4">2</div>
+          <h3 class="font-serif text-lg font-bold text-slate-900 mb-1.5">24-Hour Smart Invite Link</h3>
+          <p class="text-sm text-slate-600">Customize occasion, colors, flexible times, and maps. Links stay active for 24h while your feedback board stays open until the date passes.</p>
+        </div>
+        <div class="glass-card rounded-3xl p-6 shadow-card">
+          <div class="w-11 h-11 rounded-2xl bg-blush-100 text-blush-600 flex items-center justify-center font-bold mb-4">3</div>
+          <h3 class="font-serif text-lg font-bold text-slate-900 mb-1.5">Calendar & WhatsApp Sync</h3>
+          <p class="text-sm text-slate-600">If they say Yes, they enter their details for Google Calendar sync & WhatsApp reminders. If No, their privacy stays protected.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 2: DATE & HANGOUT STUDIO (REQUESTOR BUILDER)                   -->
+    <!-- =================================================================== -->
+    <section id="view-studio" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card rounded-3xl p-5 shadow-card">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blush-600">Date & Hangout Studio</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Design Your Request</h2>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span id="studio-pass-badge" class="px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+            Active Pass
+          </span>
+          <button type="button" onclick="navigateTo('feedback')" class="px-4 py-2 rounded-xl bg-white hover:bg-blush-50 border border-blush-200 text-blush-700 text-xs font-bold transition">
+            View My Invites
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Left Column: Customization Form -->
+        <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 shadow-card space-y-6">
+
+          <!-- 1. Who are you inviting? -->
+          <div class="space-y-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">1. Who are you inviting?</label>
+            <div class="grid grid-cols-3 gap-2.5">
+              <button type="button" onclick="setRecipientType('Significant Other / Crush')" data-rtype="Significant Other / Crush" class="rtype-btn p-3 rounded-2xl border-2 border-blush-500 bg-blush-50 text-blush-700 font-semibold text-xs sm:text-sm flex flex-col items-center gap-1.5 transition">
+                <i data-lucide="heart" class="w-5 h-5 text-blush-500"></i>
+                <span>Partner / Crush</span>
+              </button>
+              <button type="button" onclick="setRecipientType('Friend')" data-rtype="Friend" class="rtype-btn p-3 rounded-2xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-semibold text-xs sm:text-sm flex flex-col items-center gap-1.5 transition">
+                <i data-lucide="sparkles" class="w-5 h-5 text-blush-500"></i>
+                <span>Friend / Bestie</span>
+              </button>
+              <button type="button" onclick="setRecipientType('Family Member')" data-rtype="Family Member" class="rtype-btn p-3 rounded-2xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-semibold text-xs sm:text-sm flex flex-col items-center gap-1.5 transition">
+                <i data-lucide="users" class="w-5 h-5 text-blush-500"></i>
+                <span>Family Member</span>
+              </button>
+            </div>
+            <!-- Recipient Name Input (Live Synced) -->
+            <div class="pt-1">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Recipient's Name (Used in invite & live preview)</label>
+              <input id="inp-recipient-name" type="text" oninput="updateLivePreview()" placeholder="e.g., Wanjiku, Brian, Auntie Mercy..." class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 focus:ring-2 focus:ring-blush-200 outline-none text-sm font-medium" />
+            </div>
+          </div>
+
+          <!-- 2. Choose Occasion Template -->
+          <div class="space-y-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">2. Choose Occasion Template</label>
+            <div id="template-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <!-- Rendered via JS -->
+            </div>
+
+            <!-- Custom Occasion Title & Emoji Picker -->
+            <div id="custom-occasion-panel" class="hidden p-4 rounded-2xl bg-blush-50/90 border border-blush-200 space-y-3">
+              <div>
+                <label class="block text-xs font-bold text-blush-700 mb-1">Write Your Custom Occasion *</label>
+                <input id="inp-custom-occasion" type="text" oninput="updateLivePreview()" placeholder="e.g., Pottery Painting, Road Trip to Naivasha, Rooftop Brunch..." class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-blush-700 mb-1.5">Pick an Emoji for Your Occasion</label>
+                <div id="custom-emoji-grid" class="flex flex-wrap gap-1.5">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Pick Template Theme Color -->
+          <div class="space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">3. Template Theme Color</label>
+            <div id="color-swatches" class="flex flex-wrap items-center gap-3">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- 4. Headline & Personal Message -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">4. Invite Headline & Note</label>
+              <button type="button" onclick="insertFunnyLine()" class="text-xs font-bold text-blush-600 hover:underline flex items-center gap-1">
+                <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+                <span>Insert Funny Line</span>
+              </button>
+            </div>
+            <input id="inp-title" type="text" oninput="updateLivePreview()" placeholder="Candlelight Dinner & Dessert?" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm font-semibold" />
+            <textarea id="inp-message" rows="3" oninput="updateLivePreview()" placeholder="Write a sweet or playful note..." class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm"></textarea>
+          </div>
+
+          <!-- 5. Date & Flexible Time Scheduling (3 Modes) -->
+          <div class="space-y-4">
+            <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">5. Date & Flexible Time Options</label>
+            
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Select Date *</label>
+              <input id="inp-date" type="date" onchange="updateLivePreview()" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm font-medium" />
+            </div>
+
+            <!-- 3 Time Modes -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-2">How should the time be chosen?</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button type="button" onclick="setTimeMode('specific')" data-tmode="specific" class="tmode-btn p-2.5 rounded-xl border-2 border-blush-500 bg-blush-50 text-blush-700 font-bold text-xs text-center transition">
+                  Specific Time
+                </button>
+                <button type="button" onclick="setTimeMode('recipient_choice')" data-tmode="recipient_choice" class="tmode-btn p-2.5 rounded-xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-bold text-xs text-center transition">
+                  Let Recipient Choose
+                </button>
+                <button type="button" onclick="setTimeMode('time_slots')" data-tmode="time_slots" class="tmode-btn p-2.5 rounded-xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-bold text-xs text-center transition">
+                  Offer Time Slots
+                </button>
+              </div>
+            </div>
+
+            <!-- Mode A: Specific Time Input -->
+            <div id="time-mode-specific-box">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Exact Time</label>
+              <input id="inp-time" type="time" value="19:30" onchange="updateLivePreview()" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm font-medium" />
+            </div>
+
+            <!-- Mode B: Let Recipient Choose Info -->
+            <div id="time-mode-recipient-box" class="hidden p-3.5 rounded-2xl bg-blush-50 border border-blush-200 text-xs text-blush-800">
+              <div class="font-bold flex items-center gap-1.5 mb-0.5">
+                <i data-lucide="clock" class="w-4 h-4 text-blush-600"></i> Open Time Selected
+              </div>
+              <p>The recipient will pick their preferred time of day when accepting your invite!</p>
+            </div>
+
+            <!-- Mode C: Offer Time Slots Checkboxes + Custom Slot -->
+            <div id="time-mode-slots-box" class="hidden p-4 rounded-2xl bg-blush-50/80 border border-blush-200 space-y-3">
+              <label class="block text-xs font-bold text-blush-700">Tick Time Slots to Offer (Recipient picks one):</label>
+              <div id="preset-slots-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <!-- Rendered via JS -->
+              </div>
+              <div class="flex gap-2 pt-1">
+                <input id="inp-custom-slot" type="time" class="px-3 py-2 rounded-xl bg-white border border-blush-200 text-xs font-medium outline-none" />
+                <button type="button" onclick="addCustomTimeSlot()" class="px-3.5 py-2 rounded-xl bg-blush-600 hover:bg-blush-700 text-white font-bold text-xs transition">
+                  + Add Slot
+                </button>
+              </div>
+            </div>
+
+            <!-- Multi-Select Checkboxes for Automated Reminders -->
+            <div class="pt-1">
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-xs font-bold text-slate-700">Automated Reminders (Tick one or all)</label>
+                <button type="button" onclick="toggleAllReminders()" class="text-[11px] font-bold text-blush-600 hover:underline">Select / Deselect All</button>
+              </div>
+              <div id="reminders-checkbox-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-blush-200 cursor-pointer hover:bg-blush-50/50 text-xs font-medium text-slate-700">
+                  <input type="checkbox" value="WhatsApp (24 hrs before)" checked onchange="updateLivePreview()" class="rem-checkbox w-4 h-4 accent-blush-600 rounded" />
+                  <span>WhatsApp (24 hrs before)</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-blush-200 cursor-pointer hover:bg-blush-50/50 text-xs font-medium text-slate-700">
+                  <input type="checkbox" value="WhatsApp (2 hrs before)" checked onchange="updateLivePreview()" class="rem-checkbox w-4 h-4 accent-blush-600 rounded" />
+                  <span>WhatsApp (2 hrs before)</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-blush-200 cursor-pointer hover:bg-blush-50/50 text-xs font-medium text-slate-700">
+                  <input type="checkbox" value="Email (Morning of date)" onchange="updateLivePreview()" class="rem-checkbox w-4 h-4 accent-blush-600 rounded" />
+                  <span>Email (Morning of date)</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-blush-200 cursor-pointer hover:bg-blush-50/50 text-xs font-medium text-slate-700">
+                  <input type="checkbox" value="Google Calendar Alert" checked onchange="updateLivePreview()" class="rem-checkbox w-4 h-4 accent-blush-600 rounded" />
+                  <span>Google Calendar Alert</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Location Search & Embedded Map -->
+          <div class="space-y-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-blush-700">6. Venue & Google Maps Pin</label>
+            <div class="flex gap-2">
+              <input id="inp-location" type="text" value="Artcaffe Oval, Westlands, Nairobi" oninput="updateLivePreview()" placeholder="Search venue or neighborhood..." class="flex-grow px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+              <button type="button" onclick="searchMapLocation()" class="px-4 py-3 rounded-2xl bg-blush-100 hover:bg-blush-200 text-blush-800 font-bold text-xs flex items-center gap-1.5 shrink-0 transition">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <span>Pin Map</span>
+              </button>
+            </div>
+            <div class="rounded-2xl overflow-hidden border border-blush-200 h-44 bg-blush-50">
+              <iframe id="map-preview-iframe" class="w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Artcaffe%20Oval%20Westlands%20Nairobi&t=&z=14&ie=UTF8&iwloc=&output=embed"></iframe>
+            </div>
+          </div>
+
+          <!-- Generate Link Button -->
+          <button type="button" onclick="generateInviteLink()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white font-bold text-base shadow-soft transition flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-5 h-5"></i>
+            <span>Generate 24-Hour Invite Link</span>
+          </button>
+        </div>
+
+        <!-- Right Column: Live Recipient Preview -->
+        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-3">
+          <div class="text-xs font-bold uppercase tracking-wider text-blush-700 flex items-center gap-1.5">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+            <span>Live Recipient Card Preview</span>
+          </div>
+
+          <div id="live-preview-card" class="rounded-3xl p-6 sm:p-7 shadow-soft border-2 transition-all duration-300 bg-white" style="border-color: #FF4D79;">
+            <div class="flex items-center justify-between mb-3">
+              <span id="prev-badge" class="px-3 py-1 rounded-full text-xs font-bold text-white" style="background-color: #FF4D79;">Romantic Dinner</span>
+              <span id="prev-rtype" class="text-xs font-semibold text-slate-500">Partner / Crush</span>
+            </div>
+            <p id="prev-recipient-greeting" class="text-xs font-bold uppercase tracking-wider text-blush-600 mb-1">
+              Hey Special Someone! You're Invited
+            </p>
+            <div id="prev-emoji" class="text-4xl mb-2">🕯️</div>
+            <h3 id="prev-title" class="font-serif text-2xl font-bold text-slate-900 mb-2">Candlelight Dinner & Dessert?</h3>
+            <p id="prev-message" class="text-sm text-slate-600 leading-relaxed mb-5">
+              I already picked the spot and promised not to look at my phone. Just bring your gorgeous smile!
+            </p>
+
+            <div class="space-y-2.5 bg-blush-50/70 rounded-2xl p-4 mb-5 text-xs text-slate-700">
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="calendar" class="w-4 h-4 shrink-0 mt-0.5" style="color: #FF4D79;"></i>
+                <span id="prev-datetime" class="font-semibold">Tomorrow at 7:30 PM</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="map-pin" class="w-4 h-4 shrink-0 mt-0.5" style="color: #FF4D79;"></i>
+                <span id="prev-location" class="font-semibold">Artcaffe Oval, Westlands, Nairobi</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="bell-ring" class="w-4 h-4 shrink-0 mt-0.5" style="color: #FF4D79;"></i>
+                <span id="prev-reminder" class="leading-relaxed">Reminders: WhatsApp (24 hrs before), WhatsApp (2 hrs before), Google Calendar Alert</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 pt-1">
+              <span id="prev-yes-btn" class="px-6 py-2.5 rounded-2xl text-white font-bold text-sm shadow" style="background-color: #FF4D79;">Yes, I'd Love To! 💖</span>
+              <span class="px-5 py-2.5 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm border border-slate-200">No (Dodges 60s)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 3: RECIPIENT INVITE VIEW (NO LOGIN + 60S EVASIVE "NO" BUTTON)  -->
+    <!-- =================================================================== -->
+    <section id="view-recipient" class="hidden max-w-xl mx-auto">
+      <div class="glass-card rounded-[2rem] p-6 sm:p-9 shadow-soft border-2 border-blush-300 relative overflow-hidden">
+        <div class="flex items-center justify-between gap-2 mb-4">
+          <span id="rec-badge" class="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-blush-500">Romantic Dinner</span>
+          <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-blush-50 text-blush-700 border border-blush-200">
+            24h RSVP Link
+          </span>
+        </div>
+
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+          <span id="rec-greeting-prefix">Personal Invite</span> From <span id="rec-sender-name" class="text-blush-600">Kevin</span>
+        </p>
+
+        <div id="rec-emoji" class="text-5xl my-2">🕯️</div>
+        <h2 id="rec-title" class="font-serif text-2xl sm:text-3xl font-bold text-slate-900 mb-2.5">Friday Night Rooftop Dinner?</h2>
+        <p id="rec-message" class="text-sm text-slate-600 leading-relaxed mb-5">
+          I found the coziest spot with city lights. Let me treat you!
+        </p>
+
+        <div class="rounded-2xl bg-blush-50/90 border border-blush-100 p-4 space-y-2.5 mb-5 text-xs text-slate-700">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="calendar-heart" class="w-4 h-4 text-blush-500 shrink-0"></i>
+            <span id="rec-datetime" class="font-bold">Friday • 7:30 PM</span>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="map-pin" class="w-4 h-4 text-blush-500 shrink-0"></i>
+            <span id="rec-location" class="font-bold">Artcaffe Oval, Westlands, Nairobi</span>
+          </div>
+        </div>
+
+        <!-- Embedded Google Map for Recipient -->
+        <div class="rounded-2xl overflow-hidden border border-blush-200 h-40 mb-6 bg-blush-50">
+          <iframe id="rec-map-iframe" class="w-full h-full border-0" loading="lazy" src="https://maps.google.com/maps?q=Westlands%20Nairobi&t=&z=14&ie=UTF8&iwloc=&output=embed"></iframe>
+        </div>
+
+        <!-- STEP 1: DECISION ARENA WITH 60S EVASIVE NO BUTTON -->
+        <div id="rec-decision-arena" class="space-y-3">
+          <div class="flex items-center justify-center gap-2 text-xs font-semibold text-blush-700 bg-blush-100/80 py-1.5 px-3.5 rounded-full w-fit mx-auto">
+            <i data-lucide="timer" class="w-3.5 h-3.5 text-blush-500 animate-pulse"></i>
+            <span id="dodge-timer-text">Evasive mode active: 60s left</span>
+          </div>
+          <p id="dodge-taunt-text" class="text-center text-xs font-bold text-blush-600 h-4"></p>
+
+          <div id="evasive-arena" class="relative w-full min-h-[115px] rounded-2xl bg-blush-50/60 border border-dashed border-blush-200 flex items-center justify-center p-4">
+            <div class="flex flex-wrap items-center justify-center gap-4">
+              <button id="rec-yes-btn" type="button" onclick="handleRecipientYesClick()" class="px-7 py-3.5 rounded-2xl text-white font-extrabold text-sm sm:text-base shadow-soft hover:scale-105 transition flex items-center gap-2 z-10" style="background-color: #FF4D79;">
+                <span>Yes, Count Me In!</span>
+                <i data-lucide="heart" class="w-4 h-4 fill-white"></i>
+              </button>
+              <button id="evasive-no-btn" type="button" class="px-6 py-3.5 rounded-2xl bg-white text-slate-600 font-bold text-sm border border-slate-300 shadow-sm z-20">
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2A: IF RECIPIENT CLICKS YES -> COLLECT NAME, EMAIL & WHATSAPP (NO LOGIN) -->
+        <div id="rec-yes-form-panel" class="hidden mt-4 pt-5 border-t border-blush-200 space-y-4">
+          <div class="text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mb-1">Yay! Let's Lock It In 🎉</span>
+            <h3 class="font-serif text-2xl font-bold text-slate-900">Confirm your details & time</h3>
+            <p class="text-xs text-slate-500 mt-1">No account needed—just your details for the RSVP & automated reminder.</p>
+          </div>
+          <form onsubmit="submitRecipientYes(event)" class="space-y-3.5">
+            <!-- Dynamic Time Picker if Sender Left Time Open or Offered Slots -->
+            <div id="rec-dynamic-time-selector" class="hidden p-3.5 rounded-2xl bg-blush-50 border border-blush-200 space-y-2">
+              <!-- Populated dynamically based on timeMode -->
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Your Name *</label>
+              <input id="rec-inp-name" type="text" required placeholder="e.g., Grace Wanjiku" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Your Complete Email (e.g. name@gmail.com) *</label>
+              <input id="rec-inp-email" type="email" required placeholder="grace@gmail.com" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Your Kenyan WhatsApp Number (Numbers Only) *</label>
+              <input id="rec-inp-whatsapp" type="tel" inputmode="numeric" oninput="sanitizeKenyanPhoneInput(this)" maxlength="12" required placeholder="0712345678 or 254712345678" class="w-full px-4 py-3 rounded-2xl bg-white border border-blush-200 focus:border-blush-500 outline-none text-sm font-mono" />
+              <p class="text-[11px] text-slate-400 mt-1">Must be full 10 digits (07XXXXXXXX / 01XXXXXXXX) or 12 digits (2547XXXXXXXX).</p>
+            </div>
+            <button type="submit" class="w-full py-4 rounded-2xl text-white font-bold text-base shadow-soft hover:opacity-95 transition flex items-center justify-center gap-2" style="background-color: #FF4D79;">
+              <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
+              <span>Confirm RSVP & Sync Calendar</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- STEP 2B: CONFIRMED YES CELEBRATION + GOOGLE CALENDAR + WHATSAPP AUTOMATION -->
+        <div id="rec-confirmed-panel" class="hidden mt-4 pt-5 border-t border-blush-200 text-center space-y-4">
+          <div class="text-5xl">🥂💖</div>
+          <h3 class="font-serif text-2xl font-bold text-slate-900">It’s Official! You Said Yes!</h3>
+          <p class="text-xs sm:text-sm text-slate-600">
+            Your RSVP has been logged on the sender's permanent feedback dashboard. Add it to your Google Calendar or notify them on WhatsApp right now:
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <a id="gcal-sync-btn" href="#" target="_blank" class="px-5 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow">
+              <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+              <span>Add to Google Calendar</span>
+            </a>
+            <a id="wa-confirm-sender-btn" href="#" target="_blank" class="px-5 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              <span>Send WhatsApp Confirmation</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- STEP 2C: DECLINED PANEL (NO PERSONAL INFO COLLECTED) -->
+        <div id="rec-declined-panel" class="hidden mt-4 pt-5 border-t border-blush-200 text-center space-y-3">
+          <div class="text-4xl">💌</div>
+          <h3 class="font-serif text-xl font-bold text-slate-900">Response Recorded</h3>
+          <p class="text-xs text-slate-600">
+            We did not collect your email, name, or phone number. You can optionally send a quick WhatsApp note if you'd like:
+          </p>
+          <a id="wa-decline-notify-btn" href="#" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>Notify Sender via WhatsApp</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 4: PERMANENT FEEDBACK DASHBOARD                                -->
+    <!-- =================================================================== -->
+    <section id="view-feedback" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card rounded-3xl p-6 shadow-card">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blush-600">Permanent Feedback Board</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Your Sent Invites & RSVPs</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Invite links expire in 24h, while responses remain visible here until your scheduled date passes.</p>
+        </div>
+        <button type="button" onclick="handleStartCreating()" class="px-5 py-3 rounded-2xl bg-blush-600 hover:bg-blush-700 text-white font-bold text-xs shadow-soft transition">
+          + Create New Invite
+        </button>
+      </div>
+
+      <div id="feedback-invites-list" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 5: MASTER ADMIN DASHBOARD (NEXASTUDIO)                         -->
+    <!-- =================================================================== -->
+    <section id="view-admin" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card rounded-3xl p-6 shadow-card border-2 border-slate-800">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blush-600">nexastudio Master Control</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900">Master Admin Dashboard</h2>
+        </div>
+        <button type="button" onclick="openModal('modal-admin-create-user')" class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow flex items-center gap-2">
+          <i data-lucide="user-plus" class="w-4 h-4 text-blush-400"></i>
+          <span>Create User Login & Grant Access</span>
+        </button>
+      </div>
+
+      <!-- Admin KPI Grid -->
+      <div id="admin-stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Users & Subscription Extensions Table -->
+      <div class="glass-card rounded-3xl p-6 shadow-card overflow-hidden">
+        <div class="mb-4">
+          <h2 class="font-serif text-xl font-bold text-slate-900">Users, Passcodes & Access Management</h2>
+          <p class="text-xs text-slate-500">Share passcodes with users who forgot theirs, or grant/extend Day (50), Week (200), or Month (500) passes.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-blush-200 text-xs uppercase text-slate-500">
+                <th class="py-3 px-3">Requestor</th>
+                <th class="py-3 px-3">WhatsApp & Email</th>
+                <th class="py-3 px-3">Login Passcode</th>
+                <th class="py-3 px-3">Current Plan</th>
+                <th class="py-3 px-3">Expires</th>
+                <th class="py-3 px-3 text-right">Grant / Extend Access</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody" class="divide-y divide-blush-100">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PesaPal Payment Ledger -->
+      <div class="glass-card rounded-3xl p-6 shadow-card overflow-hidden">
+        <h2 class="font-serif text-xl font-bold text-slate-900 mb-3">PesaPal Payment Tracking (SHS)</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-blush-200 text-xs uppercase text-slate-500">
+                <th class="py-3 px-3">Ref ID</th>
+                <th class="py-3 px-3">Requestor</th>
+                <th class="py-3 px-3">Pass Purchased</th>
+                <th class="py-3 px-3">Method</th>
+                <th class="py-3 px-3">Amount</th>
+                <th class="py-3 px-3">Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-payments-tbody" class="divide-y divide-blush-100">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-blush-200/80 bg-white/70 backdrop-blur py-6 mt-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-bold text-blush-700 text-sm">BlushRSVP</span>
+        <span>•</span>
+        <button type="button" onclick="openPoliciesModal()" class="hover:text-blush-600 underline">Terms & Privacy Policy</button>
+      </div>
+      <div class="select-none font-semibold text-slate-600">
+        Built by <span class="text-blush-600 font-bold">nexastudio</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL 0: PRICING PLANS POP-UP (TOP NAV) ==================== -->
+  <div id="modal-pricing" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-blush-200 relative max-h-[90vh] overflow-y-auto">
+      <button type="button" onclick="closeModal('modal-pricing')" class="absolute top-5 right-5 p-2 rounded-full hover:bg-blush-50 text-slate-400 hover:text-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center max-w-xl mx-auto mb-6">
+        <span class="px-3 py-1 rounded-full bg-blush-100 text-blush-700 text-xs font-bold">PesaPal Instant Activation</span>
+        <h2 class="font-serif text-2xl sm:text-3xl font-bold text-slate-900 mt-2">Choose Your BlushRSVP Pass</h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">
+          Sign in or register first, then activate your pass via PesaPal to unlock the Date Studio.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 50 SHS -->
+        <div class="rounded-2xl p-5 bg-blush-50/60 border border-blush-200 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-blush-700 uppercase">One-Day Spark</div>
+            <div class="text-3xl font-extrabold text-slate-900 my-1">50 <span class="text-sm text-blush-600">SHS</span></div>
+            <p class="text-xs text-slate-600 mb-4">24-hour full template access including funny mode & calendar sync.</p>
+          </div>
+          <button type="button" onclick="closeModal('modal-pricing'); selectPlan('day', 50, 'Day Pass (24 Hours)')" class="w-full py-3 rounded-xl bg-white hover:bg-blush-100 text-blush-700 border border-blush-300 font-bold text-xs transition">
+            Select 50 SHS Day Pass
+          </button>
+        </div>
+
+        <!-- 200 SHS -->
+        <div class="rounded-2xl p-5 bg-white border-2 border-blush-500 shadow-soft flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-blush-700 uppercase">Weekly Social</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-blush-500 text-white font-bold">POPULAR</span>
+            </div>
+            <div class="text-3xl font-extrabold text-slate-900 my-1">200 <span class="text-sm text-blush-600">SHS</span></div>
+            <p class="text-xs text-slate-600 mb-4">7 full days of unlimited invites, custom occasions & time slots.</p>
+          </div>
+          <button type="button" onclick="closeModal('modal-pricing'); selectPlan('week', 200, 'Weekly Pass (7 Days)')" class="w-full py-3 rounded-xl bg-gradient-to-r from-blush-500 to-blush-600 text-white font-bold text-xs shadow transition">
+            Select 200 SHS Weekly Pass
+          </button>
+        </div>
+
+        <!-- 500 SHS -->
+        <div class="rounded-2xl p-5 bg-blush-50/60 border border-blush-200 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-blush-700 uppercase">Monthly VIP</div>
+            <div class="text-3xl font-extrabold text-slate-900 my-1">500 <span class="text-sm text-blush-600">SHS</span></div>
+            <p class="text-xs text-slate-600 mb-4">30 full days of unrestricted dates, hangouts & priority reminders.</p>
+          </div>
+          <button type="button" onclick="closeModal('modal-pricing'); selectPlan('month', 500, 'Monthly Pass (30 Days)')" class="w-full py-3 rounded-xl bg-white hover:bg-blush-100 text-blush-700 border border-blush-300 font-bold text-xs transition">
+            Select 500 SHS Monthly Pass
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 1: REQUESTOR SIGN IN / REGISTER & FORGOT PASSCODE ==================== -->
+  <div id="modal-auth" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-blush-200 relative max-h-[92vh] overflow-y-auto">
+      <button type="button" onclick="closeModal('modal-auth')" class="absolute top-5 right-5 p-2 rounded-full hover:bg-blush-50 text-slate-400 hover:text-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Auth Mode Switcher -->
+      <div class="flex items-center gap-2 p-1 rounded-2xl bg-blush-50 border border-blush-200 mb-5 w-fit">
+        <button type="button" id="auth-tab-register" onclick="switchAuthMode('register')" class="px-4 py-1.5 rounded-xl bg-blush-600 text-white font-bold text-xs transition">
+          Register
+        </button>
+        <button type="button" id="auth-tab-login" onclick="switchAuthMode('login')" class="px-4 py-1.5 rounded-xl text-slate-600 font-bold text-xs transition">
+          Sign In
+        </button>
+        <button type="button" id="auth-tab-forgot" onclick="switchAuthMode('forgot')" class="px-4 py-1.5 rounded-xl text-slate-600 font-bold text-xs transition">
+          Forgot Passcode?
+        </button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <form id="form-register" onsubmit="handleRequestorRegister(event)" class="space-y-3.5">
+        <div>
+          <h2 class="font-serif text-2xl font-bold text-slate-900">Create Requestor Account</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Register first, then activate your pass via PesaPal to create invites.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+          <input id="reg-name" type="text" required placeholder="e.g., Brian Kamau" class="w-full px-4 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Complete Email Address (e.g. name@gmail.com) *</label>
+          <input id="reg-email" type="email" required placeholder="brian@gmail.com" class="w-full px-4 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Kenyan WhatsApp Number (Numbers Only) *</label>
+          <input id="reg-whatsapp" type="tel" inputmode="numeric" oninput="sanitizeKenyanPhoneInput(this)" maxlength="12" required placeholder="0712345678 or 254712345678" class="w-full px-4 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm font-mono" />
+          <p class="text-[11px] text-slate-400 mt-0.5">Full 10 digits (07XXXXXXXX / 01XXXXXXXX) or 12 digits (2547XXXXXXXX).</p>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Create Your Login Passcode *</label>
+          <input id="reg-passcode" type="text" required minlength="4" placeholder="e.g., 4829 or love254" class="w-full px-4 py-2.5 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+
+        <!-- Mandatory Terms & Policies Checkbox -->
+        <div class="p-3 rounded-2xl bg-blush-50 border border-blush-200">
+          <label class="flex items-start gap-2.5 cursor-pointer text-xs text-slate-700">
+            <input id="auth-terms-checkbox" type="checkbox" required class="mt-0.5 w-4 h-4 accent-blush-600 rounded shrink-0" />
+            <span>
+              I agree to the <button type="button" onclick="openPoliciesModal()" class="text-blush-600 font-bold underline">Terms of Service, 24-Hour Invite Policy & Privacy Policy</button> (Mandatory).
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white font-bold shadow-soft transition">
+          Register & Continue
+        </button>
+      </form>
+
+      <!-- SIGN IN FORM (Works for both Regular Requestors & Master Admin) -->
+      <form id="form-login" onsubmit="handleUnifiedSignIn(event)" class="hidden space-y-4">
+        <div>
+          <h2 class="font-serif text-2xl font-bold text-slate-900">Sign In</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Enter your registered email and passcode to access your dashboard.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Email Address *</label>
+          <input id="login-email" type="email" required placeholder="brian@gmail.com" class="w-full px-4 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">Passcode *</label>
+            <button type="button" onclick="switchAuthMode('forgot')" class="text-[11px] font-bold text-blush-600 hover:underline">Forgot passcode?</button>
+          </div>
+          <input id="login-passcode" type="password" required placeholder="Enter your passcode" class="w-full px-4 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white font-bold shadow-soft transition">
+          Sign In to Dashboard
+        </button>
+      </form>
+
+      <!-- FORGOT PASSCODE RECOVERY FORM -->
+      <form id="form-forgot" onsubmit="handleForgotPasscode(event)" class="hidden space-y-4">
+        <div>
+          <h2 class="font-serif text-2xl font-bold text-slate-900">Recover Passcode</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Enter your registered email and Kenyan WhatsApp number to reveal your passcode.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Registered Email *</label>
+          <input id="forgot-email" type="email" required placeholder="brian@gmail.com" class="w-full px-4 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Registered Kenyan WhatsApp Number *</label>
+          <input id="forgot-whatsapp" type="tel" inputmode="numeric" oninput="sanitizeKenyanPhoneInput(this)" maxlength="12" required placeholder="0712345678" class="w-full px-4 py-3 rounded-2xl bg-blush-50/40 border border-blush-200 focus:border-blush-500 outline-none text-sm font-mono" />
+        </div>
+
+        <div id="forgot-result-box" class="hidden p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+          <!-- Populated dynamically -->
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-2xl bg-blush-600 hover:bg-blush-700 text-white font-bold shadow-soft transition">
+          Retrieve My Passcode
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: PESAPAL PAYMENT GATEWAY ==================== -->
+  <div id="modal-pesapal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
+      <button type="button" onclick="closeModal('modal-pesapal')" class="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 text-slate-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2.5 mb-4">
+        <div class="px-3 py-1 rounded-xl bg-sky-600 text-white font-extrabold text-sm tracking-tight">PesaPal</div>
+        <span class="text-xs font-semibold text-slate-500">Secure Kenyan Checkout</span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between mb-4">
+        <div>
+          <div class="text-xs text-slate-500">Selected Pass</div>
+          <div id="pesapal-plan-label" class="font-bold text-slate-900 text-sm">Day Pass (24 Hours)</div>
+        </div>
+        <div id="pesapal-amount-label" class="text-xl font-extrabold text-sky-700">KES 50.00</div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Choose Payment Method</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setPesapalMethod('M-Pesa Express')" data-method="M-Pesa Express" class="psp-method-btn p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 text-sky-800 font-bold text-xs transition">
+              M-Pesa Express
+            </button>
+            <button type="button" onclick="setPesapalMethod('Airtel Money / Card')" data-method="Airtel Money / Card" class="psp-method-btn p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-semibold text-xs transition">
+              Airtel Money / Card
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Kenyan M-Pesa / Airtel Phone Number (Numbers Only) *</label>
+          <input id="pesapal-phone" type="tel" inputmode="numeric" oninput="sanitizeKenyanPhoneInput(this)" maxlength="12" placeholder="0712345678 or 254712345678" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:border-sky-500 outline-none text-sm font-mono font-medium" />
+        </div>
+
+        <button id="pesapal-pay-btn" type="button" onclick="processPesapalPayment()" class="w-full py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>Pay & Unlock Studio Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: SHARE GENERATED INVITE LINK ==================== -->
+  <div id="modal-share" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-blush-200 relative text-center space-y-4">
+      <button type="button" onclick="closeModal('modal-share')" class="absolute top-5 right-5 p-2 rounded-full hover:bg-blush-50 text-slate-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-14 h-14 rounded-2xl bg-blush-100 text-blush-600 flex items-center justify-center mx-auto">
+        <i data-lucide="link" class="w-7 h-7"></i>
+      </div>
+      <h3 class="font-serif text-2xl font-bold text-slate-900">Your 24-Hour Link Is Ready!</h3>
+      <p class="text-xs text-slate-600">
+        Share this link with your recipient. It remains active for 24 hours, and their answer stays on your Feedback Dashboard until the scheduled date passes.
+      </p>
+
+      <div class="flex gap-2">
+        <input id="share-link-input" type="text" readonly class="flex-grow px-3.5 py-2.5 rounded-xl bg-blush-50 border border-blush-200 text-xs font-mono text-slate-700 outline-none" />
+        <button type="button" onclick="copyShareLink()" class="px-4 py-2.5 rounded-xl bg-blush-600 hover:bg-blush-700 text-white font-bold text-xs shrink-0">
+          Copy
+        </button>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+        <button type="button" onclick="shareLinkViaWhatsApp()" class="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Send on WhatsApp</span>
+        </button>
+        <button type="button" onclick="previewCreatedInviteAsRecipient()" class="flex-1 py-3 rounded-2xl bg-blush-100 hover:bg-blush-200 text-blush-800 font-bold text-xs">
+          Preview Recipient View
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: TERMS & PRIVACY POLICY ==================== -->
+  <div id="modal-policies" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-blush-200 relative max-h-[85vh] overflow-y-auto space-y-4">
+      <button type="button" onclick="closeModal('modal-policies')" class="absolute top-5 right-5 p-2 rounded-full hover:bg-blush-50 text-slate-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h3 class="font-serif text-2xl font-bold text-slate-900">Terms of Use & Privacy Policy</h3>
+      <div class="text-xs text-slate-600 space-y-3 leading-relaxed">
+        <p><strong>1. Access Passes (PesaPal):</strong> Users may purchase a 1-Day Pass (50 SHS), 7-Day Pass (200 SHS), or 30-Day Pass (500 SHS) via PesaPal.</p>
+        <p><strong>2. 24-Hour Link Lifespan:</strong> Every invite link automatically closes after 24 hours if unanswered. Responses remain visible on your Feedback Dashboard until the scheduled event date passes.</p>
+        <p><strong>3. Recipient Privacy & No-Login RSVP:</strong> Recipients never need to create an account. Personal details (Name, Email, WhatsApp) are collected only if they accept ("Yes") to sync Google Calendar and automated reminders. Declining ("No") records zero personal details.</p>
+        <p><strong>4. Platform Operator:</strong> Built and operated by <strong>nexastudio</strong>.</p>
+      </div>
+      <button type="button" onclick="closeModal('modal-policies')" class="w-full py-3 rounded-2xl bg-blush-600 text-white font-bold text-xs">
+        I Understand
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 5: ADMIN CREATE USER LOGIN ==================== -->
+  <div id="modal-admin-create-user" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative">
+      <button type="button" onclick="closeModal('modal-admin-create-user')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-slate-400">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+      <h3 class="font-serif text-xl font-bold text-slate-900 mb-1">Create User & Grant Access</h3>
+      <p class="text-xs text-slate-500 mb-4">Provision an account directly with a login passcode and assign a Day, Week, or Month pass.</p>
+      <form onsubmit="handleAdminCreateUser(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+          <input id="adm-new-name" type="text" required placeholder="e.g., Cynthia Njeri" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Complete Email Address</label>
+          <input id="adm-new-email" type="email" required placeholder="cynthia@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Kenyan WhatsApp Number (Numbers Only)</label>
+          <input id="adm-new-whatsapp" type="tel" inputmode="numeric" oninput="sanitizeKenyanPhoneInput(this)" maxlength="12" required placeholder="0712345678" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Set Login Passcode</label>
+          <input id="adm-new-passcode" type="text" required placeholder="e.g., 2580" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Assign Access Plan</label>
+          <select id="adm-new-plan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm">
+            <option value="day">Day Pass — 1 Day (50 SHS Value)</option>
+            <option value="week">Weekly Pass — 7 Days (200 SHS Value)</option>
+            <option value="month">Monthly Pass — 30 Days (500 SHS Value)</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-blush-600 hover:bg-blush-700 text-white font-bold text-sm">
+          Create Account & Activate
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. STATE, VALIDATORS & CONSTANTS
+    // -------------------------------------------------------------------------
+    const STORAGE_KEY = 'blushrsvp_nexastudio_v2';
+    const MASTER_ADMIN_EMAIL = 'admin@nexastudio.co.ke';
+    const MASTER_ADMIN_PASSCODE = 'nexa2026';
+
+    const TEMPLATES = [
+      { id: 'dinner', name: 'Romantic Dinner', emoji: '🕯️', defaultTitle: 'Candlelight Dinner & Dessert?', defaultMsg: 'I already picked the spot and promised not to look at my phone. Just bring your gorgeous smile!' },
+      { id: 'coffee', name: 'Coffee & Pastries', emoji: '🥐', defaultTitle: 'Coffee, Croissants & Catch-Up?', defaultMsg: 'My treat! Let’s grab warm lattes and talk about everything and nothing.' },
+      { id: 'activity', name: 'Arcade & Activity', emoji: '🎳', defaultTitle: 'Bowling, Arcade & Loser Buys Ice Cream?', defaultMsg: 'Prepare to lose gracefully. Winner gets bragging rights for the whole month!' },
+      { id: 'movie', name: 'Movie Night & Chill', emoji: '🍿', defaultTitle: 'Cozy Movie Night & Snacks?', defaultMsg: 'Popcorn, blankets, and your favorite movie pick. Zero stress, 100% vibes.' },
+      { id: 'picnic', name: 'Sunset Picnic', emoji: '🧺', defaultTitle: 'Golden Hour Picnic in the Park?', defaultMsg: 'Fresh fruit, good music, and sunset views. Say yes and I’ll pack the basket!' },
+      { id: 'family', name: 'Family Hangout', emoji: '🏡', defaultTitle: 'Sunday Family Lunch & Catch-Up?', defaultMsg: 'It’s been way too long! Let’s gather for good food and family laughs.' },
+      { id: 'funny', name: 'Funny "No Choice"', emoji: '🚨', defaultTitle: 'OFFICIAL SUMMONS: Mandatory Fun Date', defaultMsg: 'Resistance is futile. Our schedules aligned by destiny—click Yes before the No button runs away!' },
+      { id: 'custom', name: 'Custom Occasion', emoji: '✨', defaultTitle: 'Special Hangout Together?', defaultMsg: 'I planned something awesome for us. Pick a time that works best for you!' }
+    ];
+
+    const CUSTOM_EMOJIS = ['🥂', '🍕', '🎨', '🎳', '🌅', '🍦', '🎶', '🚗', '💐', '🎮', '🏖️', '🍣', '🎭', '🧗', '☕', '💖', '🍓', '🎡'];
+    const PRESET_TIME_SLOTS = ['10:00 AM', '1:00 PM', '4:00 PM', '6:30 PM', '7:30 PM', '9:00 PM'];
+
+    const THEME_COLORS = [
+      { name: 'Blush Rose', hex: '#FF4D79' },
+      { name: 'Crimson Love', hex: '#E11D48' },
+      { name: 'Lavender Dream', hex: '#8B5CF6' },
+      { name: 'Sunset Coral', hex: '#F97316' },
+      { name: 'Emerald Mint', hex: '#10B981' },
+      { name: 'Midnight Berry', hex: '#881337' }
+    ];
+
+    const FUNNY_LINES = [
+      "I asked the universe for a sign, and it told me to invite you out. Don't disappoint the cosmos!",
+      "Warning: Clicking 'No' may cause immediate FOMO and mild regret. Better click 'Yes'!",
+      "I promise to share my fries with you. That's basically a marriage proposal in food terms.",
+      "Let's go make memories we'll laugh about next week. My treat!",
+      "Schedule check: You're free, I'm free, and great food is waiting. Let's make it happen!"
+    ];
+
+    const DODGE_TAUNTS = [
+      "Nice try! Too slow 😜",
+      "Oops, that button is slippery!",
+      "Error 404: 'No' not found 💖",
+      "Are you sure?! Look at 'Yes' right there!",
+      "Haha missed me! Try again 👀",
+      "My button has cardio training today 🏃‍♂️"
+    ];
+
+    function isValidCompleteEmail(email) {
+      const strictEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return strictEmailRegex.test(String(email || '').trim());
+    }
+
+    function sanitizeKenyanPhoneInput(inputEl) {
+      inputEl.value = inputEl.value.replace(/\D/g, '');
+    }
+
+    function isValidKenyanPhone(phone) {
+      const digits = String(phone || '').replace(/\D/g, '');
+      return /^(07|01)\d{8}$/.test(digits) || /^254(7|1)\d{8}$/.test(digits);
+    }
+
+    function toWhatsAppInternational(phone) {
+      const digits = String(phone || '').replace(/\D/g, '');
+      if (digits.startsWith('0') && digits.length === 10) {
+        return '254' + digits.slice(1);
+      }
+      return digits;
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {
+        console.error('Storage read failed', e);
+      }
+
+      const now = Date.now();
+      return {
+        currentUser: null,
+        isAdminAuthenticated: false,
+        users: [
+          {
+            id: 'usr_demo_1',
+            name: 'Kevin Ochieng',
+            email: 'kevin.o@gmail.com',
+            whatsapp: '0712345678',
+            passcode: '4589',
+            plan: 'week',
+            planName: 'Weekly Pass (7 Days)',
+            expiresAt: now + 5 * 24 * 60 * 60 * 1000,
+            createdAt: now - 2 * 24 * 60 * 60 * 1000
+          }
+        ],
+        payments: [
+          {
+            id: 'PSP-894210',
+            userId: 'usr_demo_1',
+            userName: 'Kevin Ochieng',
+            planName: 'Weekly Pass (7 Days)',
+            method: 'M-Pesa Express',
+            amount: 200,
+            status: 'COMPLETED',
+            createdAt: now - 2 * 24 * 60 * 60 * 1000
+          }
+        ],
+        invites: [
+          {
+            id: 'inv_sample_1',
+            senderId: 'usr_demo_1',
+            senderName: 'Kevin Ochieng',
+            senderEmail: 'kevin.o@gmail.com',
+            senderWhatsapp: '0712345678',
+            recipientType: 'Significant Other / Crush',
+            recipientName: 'Wanjiku',
+            templateId: 'dinner',
+            occasionName: 'Romantic Dinner',
+            emoji: '🕯️',
+            color: '#FF4D79',
+            title: 'Friday Night Rooftop Dinner?',
+            message: 'I found the coziest spot with city lights. Let me treat you this Friday!',
+            eventDate: new Date(now + 48 * 60 * 60 * 1000).toISOString().slice(0, 10),
+            timeMode: 'time_slots',
+            specificTime: '19:30',
+            offeredSlots: ['6:30 PM', '7:30 PM', '9:00 PM'],
+            reminders: ['WhatsApp (24 hrs before)', 'WhatsApp (2 hrs before)', 'Google Calendar Alert'],
+            location: 'Artcaffe Oval, Westlands, Nairobi',
+            createdAt: now - 2 * 60 * 60 * 1000,
+            expiresAt: now + 22 * 60 * 60 * 1000,
+            status: 'ACTIVE',
+            rsvp: null
+          }
+        ]
+      };
+    }
+
+    let appState = loadState();
+    let pendingPlan = null;
+    let selectedPaymentMethod = 'M-Pesa Express';
+    let builderState = {
+      recipientType: 'Significant Other / Crush',
+      templateId: 'dinner',
+      customEmoji: '🥂',
+      color: '#FF4D79',
+      timeMode: 'specific',
+      selectedSlots: ['6:30 PM', '7:30 PM']
+    };
+    let activeShareInviteId = null;
+    let activeRecipientInviteId = null;
+    let dodgeInterval = null;
+    let dodgeSecondsLeft = 60;
+    let homeDemoInterval = null;
+    let homeDemoSeconds = 60;
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error('Storage write failed', e);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. LIFECYCLE ENFORCEMENT
+    // -------------------------------------------------------------------------
+    function enforceInviteLifecycles() {
+      const now = Date.now();
+      let changed = false;
+
+      appState.invites.forEach(inv => {
+        const dateStr = inv.eventDate || (inv.eventDateTime ? inv.eventDateTime.slice(0, 10) : '');
+        const eventTimestamp = dateStr ? new Date(dateStr + 'T23:59:59').getTime() : NaN;
+
+        if (!isNaN(eventTimestamp) && now > eventTimestamp) {
+          if (inv.status !== 'ARCHIVED') {
+            inv.status = 'ARCHIVED';
+            changed = true;
+          }
+        } else if (inv.status === 'ACTIVE' && now > inv.expiresAt) {
+          inv.status = 'CLOSED';
+          changed = true;
+        }
+      });
+
+      if (changed) saveState();
+    }
+
+    // -------------------------------------------------------------------------
+    // 3. TOAST & MODAL HELPERS
+    // -------------------------------------------------------------------------
+    function showToast(message, type = 'pink') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      const colors = type === 'success'
+        ? 'bg-emerald-600 text-white'
+        : type === 'error'
+          ? 'bg-rose-700 text-white'
+          : 'bg-slate-900 text-white border border-blush-400';
+
+      el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 transform transition-all duration-300 ${colors}`;
+      el.innerHTML = `<span>${message}</span>`;
+      container.appendChild(el);
+
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-8px)';
+        setTimeout(() => el.remove(), 300);
+      }, 3800);
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
+
+    function openPoliciesModal() {
+      openModal('modal-policies');
+    }
+
+    function openPricingModal() {
+      openModal('modal-pricing');
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. NAVIGATION, STRICT AUTH GATE & UNIFIED SIGN-IN (CLIENT + ADMIN)
+    // -------------------------------------------------------------------------
+    function hasActivePass(user) {
+      if (!user) return false;
+      return user.expiresAt && Number(user.expiresAt) > Date.now();
+    }
+
+    function updateNavbar() {
+      const navActions = document.getElementById('nav-actions');
+      if (!navActions) return;
+
+      if (appState.isAdminAuthenticated) {
+        navActions.innerHTML = `
+          <button type="button" onclick="navigateTo('admin')" class="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blush-400"></i>
+            <span>Master Admin</span>
+          </button>
+          <button type="button" onclick="logoutUser()" class="px-3 py-2 rounded-xl bg-blush-100 hover:bg-blush-200 text-blush-700 text-xs font-bold transition">
+            Sign Out
+          </button>
+        `;
+      } else if (appState.currentUser) {
+        const user = appState.users.find(u => u.id === appState.currentUser.id) || appState.currentUser;
+        appState.currentUser = user;
+        const active = hasActivePass(user);
+
+        navActions.innerHTML = `
+          <button type="button" onclick="openPricingModal()" class="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold ${active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+            <i data-lucide="${active ? 'check-circle-2' : 'alert-circle'}" class="w-3.5 h-3.5"></i>
+            <span>${active ? user.planName : 'No Active Pass'}</span>
+          </button>
+          <button type="button" onclick="handleStartCreating()" class="px-3.5 py-2 rounded-xl bg-blush-600 hover:bg-blush-700 text-white text-xs font-bold shadow-sm transition">
+            Create Invite
+          </button>
+          <button type="button" onclick="navigateTo('feedback')" class="px-3 py-2 rounded-xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 text-xs font-bold transition">
+            My Invites
+          </button>
+          <button type="button" onclick="logoutUser()" class="px-2.5 py-2 rounded-xl text-slate-500 hover:text-rose-600 text-xs font-semibold" title="Sign Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        `;
+      } else {
+        navActions.innerHTML = `
+          <button type="button" onclick="openPricingModal()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-blush-50 text-blush-700 border border-blush-200 text-xs font-bold transition">
+            Pricing
+          </button>
+          <button type="button" onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blush-500 to-blush-600 hover:from-blush-600 hover:to-blush-700 text-white text-xs font-bold shadow-sm transition">
+            Sign In / Register
+          </button>
+        `;
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function navigateTo(viewName) {
+      const views = ['home', 'studio', 'recipient', 'feedback', 'admin'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      if (viewName === 'feedback') renderFeedbackDashboard();
+      if (viewName === 'admin') renderAdminDashboard();
+      if (viewName === 'studio') updateStudioAccessBanner();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openAuthModal(mode = 'register') {
+      switchAuthMode(mode);
+      openModal('modal-auth');
+    }
+
+    function switchAuthMode(mode) {
+      const tabs = ['register', 'login', 'forgot'];
+      tabs.forEach(t => {
+        const tabBtn = document.getElementById(`auth-tab-${t}`);
+        const formEl = document.getElementById(`form-${t}`);
+        if (tabBtn) {
+          tabBtn.className = t === mode
+            ? 'px-4 py-1.5 rounded-xl bg-blush-600 text-white font-bold text-xs transition'
+            : 'px-4 py-1.5 rounded-xl text-slate-600 font-bold text-xs transition';
+        }
+        if (formEl) {
+          if (t === mode) formEl.classList.remove('hidden');
+          else formEl.classList.add('hidden');
+        }
+      });
+    }
+
+    function handleStartCreating() {
+      if (appState.isAdminAuthenticated) {
+        navigateTo('admin');
+        return;
+      }
+      if (!appState.currentUser) {
+        showToast('Please sign in or register first to create an invite.', 'pink');
+        openAuthModal('register');
+        return;
+      }
+      const freshUser = appState.users.find(u => u.id === appState.currentUser.id) || appState.currentUser;
+      appState.currentUser = freshUser;
+      if (!hasActivePass(freshUser)) {
+        showToast('Activate a 50 SHS, 200 SHS, or 500 SHS pass via PesaPal to unlock the Date Studio!', 'pink');
+        openPricingModal();
+        return;
+      }
+      navigateTo('studio');
+    }
+
+    function handleRequestorRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const whatsapp = document.getElementById('reg-whatsapp').value.trim();
+      const passcode = document.getElementById('reg-passcode').value.trim();
+      const agreed = document.getElementById('auth-terms-checkbox').checked;
+
+      if (!name) {
+        showToast('Please enter your full name.', 'error');
+        return;
+      }
+      if (!isValidCompleteEmail(email)) {
+        showToast('Please enter a complete email address (e.g., name@gmail.com).', 'error');
+        return;
+      }
+      if (!isValidKenyanPhone(whatsapp)) {
+        showToast('Enter a valid full Kenyan phone number (10 digits like 0712345678 or 12 digits like 254712345678).', 'error');
+        return;
+      }
+      if (passcode.length < 4) {
+        showToast('Passcode must be at least 4 characters.', 'error');
+        return;
+      }
+      if (!agreed) {
+        showToast('You must agree to the Terms & Privacy Policy to continue.', 'error');
+        return;
+      }
+      if (appState.users.some(u => u.email === email)) {
+        showToast('An account with this email already exists. Please Sign In instead.', 'error');
+        switchAuthMode('login');
+        return;
+      }
+
+      const newUser = {
+        id: 'usr_' + Date.now(),
+        name,
+        email,
+        whatsapp,
+        passcode,
+        plan: null,
+        planName: 'None',
+        expiresAt: 0,
+        createdAt: Date.now()
+      };
+
+      appState.users.push(newUser);
+      appState.currentUser = newUser;
+      appState.isAdminAuthenticated = false;
+      saveState();
+      updateNavbar();
+      closeModal('modal-auth');
+      showToast(`Welcome ${name}! Select a PesaPal pass to start creating.`, 'success');
+
+      if (pendingPlan) {
+        openPesapalModal(pendingPlan.planKey, pendingPlan.amount, pendingPlan.planName);
+      } else {
+        openPricingModal();
+      }
+    }
+
+    function handleUnifiedSignIn(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const passcode = document.getElementById('login-passcode').value.trim();
+
+      if (!isValidCompleteEmail(email)) {
+        showToast('Please enter a complete email address (e.g., name@gmail.com).', 'error');
+        return;
+      }
+
+      if (email === MASTER_ADMIN_EMAIL && passcode === MASTER_ADMIN_PASSCODE) {
+        appState.isAdminAuthenticated = true;
+        appState.currentUser = null;
+        saveState();
+        updateNavbar();
+        closeModal('modal-auth');
+        showToast('Signed in to Master Admin Dashboard.', 'success');
+        navigateTo('admin');
+        return;
+      }
+
+      const user = appState.users.find(u => u.email === email && u.passcode === passcode);
+      if (!user) {
+        showToast('Invalid email or passcode. Use "Forgot Passcode?" if needed.', 'error');
+        return;
+      }
+
+      appState.currentUser = user;
+      appState.isAdminAuthenticated = false;
+      saveState();
+      updateNavbar();
+      closeModal('modal-auth');
+      showToast(`Welcome back, ${user.name}!`, 'success');
+
+      if (pendingPlan) {
+        openPesapalModal(pendingPlan.planKey, pendingPlan.amount, pendingPlan.planName);
+      } else if (hasActivePass(user)) {
+        navigateTo('studio');
+      } else {
+        openPricingModal();
+      }
+    }
+
+    function handleForgotPasscode(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+      const whatsapp = document.getElementById('forgot-whatsapp').value.trim();
+      const resultBox = document.getElementById('forgot-result-box');
+
+      if (!isValidCompleteEmail(email) || !isValidKenyanPhone(whatsapp)) {
+        showToast('Enter a valid complete email and full Kenyan WhatsApp number.', 'error');
+        return;
+      }
+
+      const normalizedInput = toWhatsAppInternational(whatsapp);
+      const user = appState.users.find(u => u.email === email && toWhatsAppInternational(u.whatsapp) === normalizedInput);
+
+      if (!user) {
+        showToast('No matching account found for that email and WhatsApp number.', 'error');
+        if (resultBox) resultBox.classList.add('hidden');
+        return;
+      }
+
+      if (resultBox) {
+        resultBox.innerHTML = `
+          <div class="font-bold text-emerald-800">Account Verified for ${user.name}!</div>
+          <div>Your Login Passcode is: <span class="px-2 py-0.5 rounded bg-white border border-emerald-300 font-mono font-extrabold text-sm">${user.passcode}</span></div>
+          <button type="button" onclick="document.getElementById('login-email').value='${user.email}'; document.getElementById('login-passcode').value='${user.passcode}'; switchAuthMode('login');" class="mt-1.5 inline-block text-emerald-700 font-bold underline">
+            Auto-fill & Sign In Now →
+          </button>
+        `;
+        resultBox.classList.remove('hidden');
+      }
+    }
+
+    function logoutUser() {
+      appState.currentUser = null;
+      appState.isAdminAuthenticated = false;
+      saveState();
+      updateNavbar();
+      navigateTo('home');
+      showToast('Signed out successfully.', 'pink');
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. PESAPAL CHECKOUT & PASS ACTIVATION
+    // -------------------------------------------------------------------------
+    function selectPlan(planKey, amount, planName) {
+      pendingPlan = { planKey, amount, planName };
+      if (!appState.currentUser) {
+        showToast('Register or Sign In first before paying via PesaPal.', 'pink');
+        openAuthModal('register');
+        return;
+      }
+      openPesapalModal(planKey, amount, planName);
+    }
+
+    function openPesapalModal(planKey, amount, planName) {
+      pendingPlan = { planKey, amount, planName };
+      const planLabelEl = document.getElementById('pesapal-plan-label');
+      const amountLabelEl = document.getElementById('pesapal-amount-label');
+      const phoneInp = document.getElementById('pesapal-phone');
+
+      if (planLabelEl) planLabelEl.textContent = planName;
+      if (amountLabelEl) amountLabelEl.textContent = `KES ${amount}.00`;
+      if (phoneInp && appState.currentUser && appState.currentUser.whatsapp) {
+        phoneInp.value = appState.currentUser.whatsapp;
+      }
+      openModal('modal-pesapal');
+    }
+
+    function setPesapalMethod(method) {
+      selectedPaymentMethod = method;
+      document.querySelectorAll('.psp-method-btn').forEach(btn => {
+        const isSelected = btn.dataset.method === method;
+        btn.className = isSelected
+          ? 'psp-method-btn p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 text-sky-800 font-bold text-xs transition'
+          : 'psp-method-btn p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-semibold text-xs transition';
+      });
+    }
+
+    function processPesapalPayment() {
+      if (!appState.currentUser || !pendingPlan) return;
+      const phone = document.getElementById('pesapal-phone').value.trim();
+      if (!isValidKenyanPhone(phone)) {
+        showToast('Enter a valid full Kenyan M-Pesa/Airtel number (e.g., 0712345678).', 'error');
+        return;
+      }
+
+      const durations = {
+        day: 24 * 60 * 60 * 1000,
+        week: 7 * 24 * 60 * 60 * 1000,
+        month: 30 * 24 * 60 * 60 * 1000
+      };
+      const addedMs = durations[pendingPlan.planKey] || durations.day;
+      const userIdx = appState.users.findIndex(u => u.id === appState.currentUser.id);
+      if (userIdx === -1) return;
+
+      const baseTime = Math.max(Date.now(), appState.users[userIdx].expiresAt || 0);
+      appState.users[userIdx].plan = pendingPlan.planKey;
+      appState.users[userIdx].planName = pendingPlan.planName;
+      appState.users[userIdx].expiresAt = baseTime + addedMs;
+      appState.currentUser = appState.users[userIdx];
+
+      appState.payments.unshift({
+        id: 'PSP-' + Math.floor(100000 + Math.random() * 900000),
+        userId: appState.currentUser.id,
+        userName: appState.currentUser.name,
+        planName: pendingPlan.planName,
+        method: selectedPaymentMethod,
+        amount: pendingPlan.amount,
+        status: 'COMPLETED',
+        createdAt: Date.now()
+      });
+
+      pendingPlan = null;
+      saveState();
+      updateNavbar();
+      closeModal('modal-pesapal');
+      showToast(`PesaPal Payment Confirmed! ${appState.currentUser.planName} unlocked.`, 'success');
+      navigateTo('studio');
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. DATE & HANGOUT STUDIO BUILDER + LIVE PREVIEW
+    // -------------------------------------------------------------------------
+    function updateStudioAccessBanner() {
+      const badgeEl = document.getElementById('studio-pass-badge');
+      if (!badgeEl || !appState.currentUser) return;
+      const user = appState.users.find(u => u.id === appState.currentUser.id) || appState.currentUser;
+      const remainingHrs = Math.max(0, Math.ceil((user.expiresAt - Date.now()) / (60 * 60 * 1000)));
+      badgeEl.textContent = `${user.planName} • ${remainingHrs}h remaining`;
+    }
+
+    function setRecipientType(type) {
+      builderState.recipientType = type;
+      document.querySelectorAll('.rtype-btn').forEach(btn => {
+        const active = btn.dataset.rtype === type;
+        btn.className = active
+          ? 'rtype-btn p-3 rounded-2xl border-2 border-blush-500 bg-blush-50 text-blush-700 font-semibold text-xs sm:text-sm flex flex-col items-center gap-1.5 transition'
+          : 'rtype-btn p-3 rounded-2xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-semibold text-xs sm:text-sm flex flex-col items-center gap-1.5 transition';
+      });
+      updateLivePreview();
+    }
+
+    function renderTemplateGrid() {
+      const grid = document.getElementById('template-grid');
+      if (!grid) return;
+      grid.innerHTML = TEMPLATES.map(tpl => {
+        const active = builderState.templateId === tpl.id;
+        return `
+          <button type="button" onclick="selectTemplate('${tpl.id}')" class="p-3 rounded-2xl border ${active ? 'border-2 border-blush-500 bg-blush-50 text-blush-800' : 'border-blush-200 bg-white text-slate-700 hover:bg-blush-50/60'} text-left transition flex flex-col gap-1">
+            <span class="text-xl">${tpl.emoji}</span>
+            <span class="text-xs font-bold leading-tight">${tpl.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectTemplate(templateId) {
+      builderState.templateId = templateId;
+      renderTemplateGrid();
+      const tpl = TEMPLATES.find(t => t.id === templateId);
+      const customPanel = document.getElementById('custom-occasion-panel');
+      if (customPanel) {
+        if (templateId === 'custom') customPanel.classList.remove('hidden');
+        else customPanel.classList.add('hidden');
+      }
+      if (tpl) {
+        const titleInp = document.getElementById('inp-title');
+        const msgInp = document.getElementById('inp-message');
+        if (titleInp) titleInp.value = tpl.defaultTitle;
+        if (msgInp) msgInp.value = tpl.defaultMsg;
+      }
+      updateLivePreview();
+    }
+
+    function renderCustomEmojiGrid() {
+      const grid = document.getElementById('custom-emoji-grid');
+      if (!grid) return;
+      grid.innerHTML = CUSTOM_EMOJIS.map(em => `
+        <button type="button" onclick="selectCustomEmoji('${em}')" class="w-9 h-9 rounded-xl border ${builderState.customEmoji === em ? 'border-2 border-blush-500 bg-white shadow-sm' : 'border-blush-200 bg-white/70'} text-lg flex items-center justify-center hover:scale-110 transition">
+          ${em}
+        </button>
+      `).join('');
+    }
+
+    function selectCustomEmoji(em) {
+      builderState.customEmoji = em;
+      renderCustomEmojiGrid();
+      updateLivePreview();
+    }
+
+    function renderColorSwatches() {
+      const container = document.getElementById('color-swatches');
+      if (!container) return;
+      container.innerHTML = THEME_COLORS.map(c => `
+        <button type="button" onclick="selectThemeColor('${c.hex}')" title="${c.name}" class="w-8 h-8 rounded-full border-2 ${builderState.color === c.hex ? 'border-slate-900 scale-110' : 'border-white'} shadow-sm transition" style="background-color: ${c.hex};"></button>
+      `).join('');
+    }
+
+    function selectThemeColor(hex) {
+      builderState.color = hex;
+      renderColorSwatches();
+      updateLivePreview();
+    }
+
+    function insertFunnyLine() {
+      const msgInp = document.getElementById('inp-message');
+      if (!msgInp) return;
+      const line = FUNNY_LINES[Math.floor(Math.random() * FUNNY_LINES.length)];
+      msgInp.value = line;
+      updateLivePreview();
+    }
+
+    function setTimeMode(mode) {
+      builderState.timeMode = mode;
+      document.querySelectorAll('.tmode-btn').forEach(btn => {
+        const active = btn.dataset.tmode === mode;
+        btn.className = active
+          ? 'tmode-btn p-2.5 rounded-xl border-2 border-blush-500 bg-blush-50 text-blush-700 font-bold text-xs text-center transition'
+          : 'tmode-btn p-2.5 rounded-xl border border-blush-200 bg-white text-slate-600 hover:bg-blush-50 font-bold text-xs text-center transition';
+      });
+
+      const boxSpecific = document.getElementById('time-mode-specific-box');
+      const boxRecipient = document.getElementById('time-mode-recipient-box');
+      const boxSlots = document.getElementById('time-mode-slots-box');
+      if (boxSpecific) boxSpecific.classList.toggle('hidden', mode !== 'specific');
+      if (boxRecipient) boxRecipient.classList.toggle('hidden', mode !== 'recipient_choice');
+      if (boxSlots) boxSlots.classList.toggle('hidden', mode !== 'time_slots');
+      updateLivePreview();
+    }
+
+    function renderPresetSlotsGrid() {
+      const grid = document.getElementById('preset-slots-grid');
+      if (!grid) return;
+      const allSlots = Array.from(new Set([...PRESET_TIME_SLOTS, ...builderState.selectedSlots]));
+      grid.innerHTML = allSlots.map(slot => {
+        const checked = builderState.selectedSlots.includes(slot);
+        return `
+          <label class="flex items-center gap-2 p-2 rounded-xl bg-white border ${checked ? 'border-blush-500 text-blush-700' : 'border-blush-200 text-slate-600'} text-xs font-bold cursor-pointer">
+            <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTimeSlot('${slot}')" class="accent-blush-600 rounded" />
+            <span>${slot}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function toggleTimeSlot(slot) {
+      if (builderState.selectedSlots.includes(slot)) {
+        builderState.selectedSlots = builderState.selectedSlots.filter(s => s !== slot);
+      } else {
+        builderState.selectedSlots.push(slot);
+      }
+      renderPresetSlotsGrid();
+      updateLivePreview();
+    }
+
+    function addCustomTimeSlot() {
+      const inp = document.getElementById('inp-custom-slot');
+      if (!inp || !inp.value) return;
+      const [h, m] = inp.value.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hr12 = h % 12 || 12;
+      const formatted = `${hr12}:${String(m).padStart(2, '0')} ${ampm}`;
+      if (!builderState.selectedSlots.includes(formatted)) {
+        builderState.selectedSlots.push(formatted);
+      }
+      renderPresetSlotsGrid();
+      updateLivePreview();
+    }
+
+    function toggleAllReminders() {
+      const boxes = Array.from(document.querySelectorAll('.rem-checkbox'));
+      const allChecked = boxes.every(b => b.checked);
+      boxes.forEach(b => (b.checked = !allChecked));
+      updateLivePreview();
+    }
+
+    function getSelectedReminders() {
+      return Array.from(document.querySelectorAll('.rem-checkbox:checked')).map(b => b.value);
+    }
+
+    function searchMapLocation() {
+      const locInp = document.getElementById('inp-location');
+      const iframe = document.getElementById('map-preview-iframe');
+      if (!locInp || !iframe) return;
+      const query = locInp.value.trim() || 'Westlands, Nairobi, Kenya';
+      iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      updateLivePreview();
+    }
+
+    function formatDisplayTime(dateStr, timeMode, specificTime, slots) {
+      const dateObj = dateStr ? new Date(dateStr + 'T12:00:00') : new Date();
+      const dateLabel = dateObj.toLocaleDateString('en-KE', { weekday: 'short', month: 'short', day: 'numeric' });
+      if (timeMode === 'recipient_choice') {
+        return `${dateLabel} • Recipient picks time`;
+      }
+      if (timeMode === 'time_slots') {
+        const list = slots && slots.length ? slots.join(' / ') : 'Flexible slots';
+        return `${dateLabel} • Options: ${list}`;
+      }
+      if (specificTime) {
+        const [h, m] = specificTime.split(':').map(Number);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hr12 = h % 12 || 12;
+        return `${dateLabel} at ${hr12}:${String(m).padStart(2, '0')} ${ampm}`;
+      }
+      return dateLabel;
+    }
+
+    function updateLivePreview() {
+      const tpl = TEMPLATES.find(t => t.id === builderState.templateId) || TEMPLATES[0];
+      const recNameEl = document.getElementById('inp-recipient-name');
+      const customOccEl = document.getElementById('inp-custom-occasion');
+      const titleInp = document.getElementById('inp-title');
+      const msgInp = document.getElementById('inp-message');
+      const dateInp = document.getElementById('inp-date');
+      const timeInp = document.getElementById('inp-time');
+      const locInp = document.getElementById('inp-location');
+
+      const recName = recNameEl ? recNameEl.value.trim() : '';
+      const customOcc = customOccEl ? customOccEl.value.trim() : '';
+      const title = (titleInp && titleInp.value.trim()) ? titleInp.value.trim() : tpl.defaultTitle;
+      const message = (msgInp && msgInp.value.trim()) ? msgInp.value.trim() : tpl.defaultMsg;
+      const dateVal = dateInp ? dateInp.value : '';
+      const timeVal = timeInp ? timeInp.value : '19:30';
+      const locVal = (locInp && locInp.value.trim()) ? locInp.value.trim() : 'Artcaffe Oval, Westlands, Nairobi';
+      const reminders = getSelectedReminders();
+
+      const occName = builderState.templateId === 'custom' ? (customOcc || 'Custom Occasion') : tpl.name;
+      const emoji = builderState.templateId === 'custom' ? builderState.customEmoji : tpl.emoji;
+
+      const card = document.getElementById('live-preview-card');
+      const badge = document.getElementById('prev-badge');
+      const rtype = document.getElementById('prev-rtype');
+      const greeting = document.getElementById('prev-recipient-greeting');
+      const emojiEl = document.getElementById('prev-emoji');
+      const titleEl = document.getElementById('prev-title');
+      const msgEl = document.getElementById('prev-message');
+      const dtEl = document.getElementById('prev-datetime');
+      const locEl = document.getElementById('prev-location');
+      const remEl = document.getElementById('prev-reminder');
+      const yesBtn = document.getElementById('prev-yes-btn');
+
+      if (card) card.style.borderColor = builderState.color;
+      if (badge) {
+        badge.style.backgroundColor = builderState.color;
+        badge.textContent = occName;
+      }
+      if (rtype) rtype.textContent = builderState.recipientType;
+      if (greeting) {
+        greeting.style.color = builderState.color;
+        greeting.textContent = recName ? `Hey ${recName}! You're Invited` : `Hey Special Someone! You're Invited`;
+      }
+      if (emojiEl) emojiEl.textContent = emoji;
+      if (titleEl) titleEl.textContent = title;
+      if (msgEl) msgEl.textContent = message;
+      if (dtEl) dtEl.textContent = formatDisplayTime(dateVal, builderState.timeMode, timeVal, builderState.selectedSlots);
+      if (locEl) locEl.textContent = locVal;
+      if (remEl) remEl.textContent = reminders.length ? `Reminders: ${reminders.join(', ')}` : 'Reminders: None selected';
+      if (yesBtn) yesBtn.style.backgroundColor = builderState.color;
+    }
+
+    function generateInviteLink() {
+      if (!appState.currentUser) {
+        openAuthModal('login');
+        return;
+      }
+      const user = appState.users.find(u => u.id === appState.currentUser.id) || appState.currentUser;
+      if (!hasActivePass(user)) {
+        showToast('Your pass has expired. Please renew via PesaPal.', 'error');
+        openPricingModal();
+        return;
+      }
+
+      const tpl = TEMPLATES.find(t => t.id === builderState.templateId) || TEMPLATES[0];
+      const customOccEl = document.getElementById('inp-custom-occasion');
+      const customOcc = customOccEl ? customOccEl.value.trim() : '';
+      if (builderState.templateId === 'custom' && !customOcc) {
+        showToast('Please write your custom occasion name.', 'error');
+        return;
+      }
+
+      const dateInp = document.getElementById('inp-date');
+      const eventDate = dateInp ? dateInp.value : '';
+      if (!eventDate) {
+        showToast('Please select a date for your invite.', 'error');
+        return;
+      }
+
+      if (builderState.timeMode === 'time_slots' && builderState.selectedSlots.length === 0) {
+        showToast('Please tick at least one time slot option.', 'error');
+        return;
+      }
+
+      const locInp = document.getElementById('inp-location');
+      const titleInp = document.getElementById('inp-title');
+      const msgInp = document.getElementById('inp-message');
+      const recNameInp = document.getElementById('inp-recipient-name');
+      const timeInp = document.getElementById('inp-time');
+
+      const location = (locInp && locInp.value.trim()) ? locInp.value.trim() : 'Westlands, Nairobi';
+      const title = (titleInp && titleInp.value.trim()) ? titleInp.value.trim() : tpl.defaultTitle;
+      const message = (msgInp && msgInp.value.trim()) ? msgInp.value.trim() : tpl.defaultMsg;
+      const recipientName = recNameInp ? recNameInp.value.trim() : '';
+      const specificTime = timeInp ? timeInp.value : '19:30';
+
+      const newInvite = {
+        id: 'inv_' + Date.now(),
+        senderId: user.id,
+        senderName: user.name,
+        senderEmail: user.email,
+        senderWhatsapp: user.whatsapp,
+        recipientType: builderState.recipientType,
+        recipientName,
+        templateId: builderState.templateId,
+        occasionName: builderState.templateId === 'custom' ? customOcc : tpl.name,
+        emoji: builderState.templateId === 'custom' ? builderState.customEmoji : tpl.emoji,
+        color: builderState.color,
+        title,
+        message,
+        eventDate,
+        timeMode: builderState.timeMode,
+        specificTime,
+        offeredSlots: [...builderState.selectedSlots],
+        reminders: getSelectedReminders(),
+        location,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+        status: 'ACTIVE',
+        rsvp: null
+      };
+
+      appState.invites.unshift(newInvite);
+      saveState();
+      activeShareInviteId = newInvite.id;
+
+      const shareUrl = `${window.location.origin}${window.location.pathname}?invite=${newInvite.id}`;
+      const shareInp = document.getElementById('share-link-input');
+      if (shareInp) shareInp.value = shareUrl;
+      openModal('modal-share');
+      showToast('24-Hour Invite Link Generated!', 'success');
+    }
+
+    function copyShareLink() {
+      const inp = document.getElementById('share-link-input');
+      if (!inp) return;
+      inp.select();
+      document.execCommand('copy');
+      showToast('Invite link copied to clipboard!', 'success');
+    }
+
+    function shareLinkViaWhatsApp() {
+      const inv = appState.invites.find(i => i.id === activeShareInviteId);
+      const shareInp = document.getElementById('share-link-input');
+      const url = shareInp ? shareInp.value : window.location.href;
+      const who = (inv && inv.recipientName) ? `Hey ${inv.recipientName}! ` : 'Hey! ';
+      const occ = (inv && inv.occasionName) ? inv.occasionName : 'Date';
+      const text = `${who}I sent you a special ${occ} invite on BlushRSVP 💖 Open it before the 24h timer closes: ${url}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function previewCreatedInviteAsRecipient() {
+      closeModal('modal-share');
+      if (activeShareInviteId) openRecipientView(activeShareInviteId);
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. HOME DEMO & RECIPIENT VIEW (60-SECOND EVASIVE "NO" BUTTON)
+    // -------------------------------------------------------------------------
+    function moveDodgeButton(btn, arena, tauntEl) {
+      if (!btn || !arena) return;
+      const arenaRect = arena.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+      const maxX = Math.max(10, arenaRect.width - btnRect.width - 12);
+      const maxY = Math.max(10, arenaRect.height - btnRect.height - 12);
+      const randX = Math.floor(Math.random() * maxX);
+      const randY = Math.floor(Math.random() * maxY);
+
+      btn.style.position = 'absolute';
+      btn.style.left = `${randX}px`;
+      btn.style.top = `${randY}px`;
+
+      if (tauntEl) {
+        tauntEl.textContent = DODGE_TAUNTS[Math.floor(Math.random() * DODGE_TAUNTS.length)];
+      }
+    }
+
+    function initHomeDemoDodge() {
+      const btn = document.getElementById('home-demo-no-btn');
+      const arena = document.getElementById('home-demo-arena');
+      const tauntEl = document.getElementById('home-demo-taunt');
+      if (!btn || !arena) return;
+
+      const dodgeHandler = (e) => {
+        if (homeDemoSeconds > 0) {
+          e.preventDefault();
+          moveDodgeButton(btn, arena, tauntEl);
+        } else {
+          showToast('60 seconds passed! The "No" button settled—click Restart 60s Demo to test again.', 'pink');
+        }
+      };
+
+      btn.addEventListener('mouseenter', dodgeHandler);
+      btn.addEventListener('touchstart', dodgeHandler, { passive: false });
+      btn.addEventListener('click', dodgeHandler);
+      resetHomeDemoTimer();
+    }
+
+    function resetHomeDemoTimer() {
+      if (homeDemoInterval) clearInterval(homeDemoInterval);
+      homeDemoSeconds = 60;
+      const btn = document.getElementById('home-demo-no-btn');
+      const timerText = document.getElementById('home-demo-timer-text');
+      const tauntEl = document.getElementById('home-demo-taunt');
+
+      if (btn) {
+        btn.style.position = 'relative';
+        btn.style.left = '0px';
+        btn.style.top = '0px';
+      }
+      if (tauntEl) tauntEl.textContent = '';
+
+      homeDemoInterval = setInterval(() => {
+        homeDemoSeconds--;
+        if (homeDemoSeconds > 0) {
+          if (timerText) timerText.textContent = `"No" button dodges cursor for ${homeDemoSeconds}s...`;
+        } else {
+          clearInterval(homeDemoInterval);
+          if (timerText) timerText.textContent = '60s complete — "No" button has settled in place.';
+          if (btn) {
+            btn.style.position = 'relative';
+            btn.style.left = '0px';
+            btn.style.top = '0px';
+          }
+        }
+      }, 1000);
+    }
+
+    function triggerHomeDemoYes() {
+      showToast('That’s the spirit! Opening full recipient RSVP flow...', 'success');
+      launchDemoRecipientInvite();
+    }
+
+    function launchDemoRecipientInvite() {
+      const sample = appState.invites[0];
+      if (sample) openRecipientView(sample.id);
+    }
+
+    function openRecipientView(inviteId) {
+      enforceInviteLifecycles();
+      const inv = appState.invites.find(i => i.id === inviteId);
+      if (!inv) {
+        showToast('Invite not found or removed.', 'error');
+        navigateTo('home');
+        return;
+      }
+
+      activeRecipientInviteId = inv.id;
+      navigateTo('recipient');
+
+      const badge = document.getElementById('rec-badge');
+      const prefix = document.getElementById('rec-greeting-prefix');
+      const sender = document.getElementById('rec-sender-name');
+      const emoji = document.getElementById('rec-emoji');
+      const title = document.getElementById('rec-title');
+      const msg = document.getElementById('rec-message');
+      const dt = document.getElementById('rec-datetime');
+      const loc = document.getElementById('rec-location');
+      const mapFrame = document.getElementById('rec-map-iframe');
+      const yesBtn = document.getElementById('rec-yes-btn');
+
+      if (badge) {
+        badge.textContent = inv.occasionName;
+        badge.style.backgroundColor = inv.color || '#FF4D79';
+      }
+      if (prefix) {
+        prefix.textContent = inv.recipientName ? `Hey ${inv.recipientName}! Personal Invite` : 'Personal Invite';
+      }
+      if (sender) sender.textContent = inv.senderName;
+      if (emoji) emoji.textContent = inv.emoji;
+      if (title) title.textContent = inv.title;
+      if (msg) msg.textContent = inv.message;
+      if (dt) dt.textContent = formatDisplayTime(inv.eventDate, inv.timeMode, inv.specificTime, inv.offeredSlots);
+      if (loc) loc.textContent = inv.location;
+      if (mapFrame) {
+        mapFrame.src = `https://maps.google.com/maps?q=${encodeURIComponent(inv.location)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      }
+      if (yesBtn) yesBtn.style.backgroundColor = inv.color || '#FF4D79';
+
+      const dynTimeBox = document.getElementById('rec-dynamic-time-selector');
+      if (dynTimeBox) {
+        if (inv.timeMode === 'recipient_choice') {
+          dynTimeBox.classList.remove('hidden');
+          dynTimeBox.innerHTML = `
+            <label class="block text-xs font-bold text-blush-700">Pick Your Preferred Time of Day *</label>
+            <input id="rec-chosen-time" type="time" value="19:00" required class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-blush-200 text-sm font-medium" />
+          `;
+        } else if (inv.timeMode === 'time_slots' && inv.offeredSlots && inv.offeredSlots.length) {
+          dynTimeBox.classList.remove('hidden');
+          dynTimeBox.innerHTML = `
+            <label class="block text-xs font-bold text-blush-700">Choose One of ${inv.senderName}'s Time Slots *</label>
+            <select id="rec-chosen-slot" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-blush-200 text-sm font-semibold">
+              ${inv.offeredSlots.map(s => `<option value="${s}">${s}</option>`).join('')}
+            </select>
+          `;
+        } else {
+          dynTimeBox.classList.add('hidden');
+          dynTimeBox.innerHTML = '';
+        }
+      }
+
+      const arenaEl = document.getElementById('rec-decision-arena');
+      const yesFormEl = document.getElementById('rec-yes-form-panel');
+      const confirmedEl = document.getElementById('rec-confirmed-panel');
+      const declinedEl = document.getElementById('rec-declined-panel');
+
+      if (arenaEl) arenaEl.classList.remove('hidden');
+      if (yesFormEl) yesFormEl.classList.add('hidden');
+      if (confirmedEl) confirmedEl.classList.add('hidden');
+      if (declinedEl) declinedEl.classList.add('hidden');
+
+      startRecipientDodgeTimer();
+    }
+
+    function startRecipientDodgeTimer() {
+      if (dodgeInterval) clearInterval(dodgeInterval);
+      dodgeSecondsLeft = 60;
+      const noBtn = document.getElementById('evasive-no-btn');
+      const arena = document.getElementById('evasive-arena');
+      const timerEl = document.getElementById('dodge-timer-text');
+      const tauntEl = document.getElementById('dodge-taunt-text');
+
+      if (!noBtn || !arena) return;
+      noBtn.style.position = 'relative';
+      noBtn.style.left = '0px';
+      noBtn.style.top = '0px';
+      if (tauntEl) tauntEl.textContent = '';
+
+      const onNoAttempt = (e) => {
+        if (dodgeSecondsLeft > 0) {
+          e.preventDefault();
+          moveDodgeButton(noBtn, arena, tauntEl);
+        } else {
+          handleRecipientNo();
+        }
+      };
+
+      noBtn.onmouseenter = onNoAttempt;
+      noBtn.ontouchstart = onNoAttempt;
+      noBtn.onclick = onNoAttempt;
+
+      dodgeInterval = setInterval(() => {
+        dodgeSecondsLeft--;
+        if (dodgeSecondsLeft > 0) {
+          if (timerEl) timerEl.textContent = `Evasive mode active: ${dodgeSecondsLeft}s left`;
+        } else {
+          clearInterval(dodgeInterval);
+          if (timerEl) timerEl.textContent = 'Button settled in position';
+          noBtn.style.position = 'relative';
+          noBtn.style.left = '0px';
+          noBtn.style.top = '0px';
+        }
+      }, 1000);
+    }
+
+    function handleRecipientYesClick() {
+      if (dodgeInterval) clearInterval(dodgeInterval);
+      const arenaEl = document.getElementById('rec-decision-arena');
+      const yesFormEl = document.getElementById('rec-yes-form-panel');
+      if (arenaEl) arenaEl.classList.add('hidden');
+      if (yesFormEl) yesFormEl.classList.remove('hidden');
+    }
+
+    function submitRecipientYes(e) {
+      e.preventDefault();
+      const inv = appState.invites.find(i => i.id === activeRecipientInviteId);
+      if (!inv) return;
+
+      const name = document.getElementById('rec-inp-name').value.trim();
+      const email = document.getElementById('rec-inp-email').value.trim().toLowerCase();
+      const whatsapp = document.getElementById('rec-inp-whatsapp').value.trim();
+
+      if (!name || !isValidCompleteEmail(email) || !isValidKenyanPhone(whatsapp)) {
+        showToast('Please enter your name, complete email, and full Kenyan WhatsApp number.', 'error');
+        return;
+      }
+
+      let chosenTime = inv.specificTime || '19:30';
+      if (inv.timeMode === 'recipient_choice') {
+        const chosenTimeEl = document.getElementById('rec-chosen-time');
+        chosenTime = chosenTimeEl ? chosenTimeEl.value : '19:00';
+      } else if (inv.timeMode === 'time_slots') {
+        const chosenSlotEl = document.getElementById('rec-chosen-slot');
+        chosenTime = chosenSlotEl ? chosenSlotEl.value : inv.offeredSlots[0];
+      }
+
+      inv.rsvp = {
+        decision: 'YES',
+        guestName: name,
+        guestEmail: email,
+        guestWhatsapp: whatsapp,
+        chosenTime,
+        respondedAt: Date.now()
+      };
+      inv.status = 'ACCEPTED';
+      saveState();
+
+      const yesFormEl = document.getElementById('rec-yes-form-panel');
+      const confirmedEl = document.getElementById('rec-confirmed-panel');
+      if (yesFormEl) yesFormEl.classList.add('hidden');
+      if (confirmedEl) confirmedEl.classList.remove('hidden');
+
+      const cleanDate = (inv.eventDate || '2026-12-01').replace(/-/g, '');
+      const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(inv.title + ' with ' + inv.senderName)}&dates=${cleanDate}T160000Z/${cleanDate}T180000Z&details=${encodeURIComponent(inv.message + ' | Chosen Time: ' + chosenTime)}&location=${encodeURIComponent(inv.location)}`;
+
+      const gcalBtn = document.getElementById('gcal-sync-btn');
+      if (gcalBtn) gcalBtn.href = gcalUrl;
+
+      const senderWa = toWhatsAppInternational(inv.senderWhatsapp);
+      const waMsg = `Hi ${inv.senderName}! 💖 I just accepted your BlushRSVP invite "${inv.title}" for ${inv.eventDate} (${chosenTime}) at ${inv.location}! — ${name}`;
+      const waBtn = document.getElementById('wa-confirm-sender-btn');
+      if (waBtn) waBtn.href = `https://wa.me/${senderWa}?text=${encodeURIComponent(waMsg)}`;
+
+      showToast('RSVP Confirmed! Synced with Google Calendar & WhatsApp.', 'success');
+    }
+
+    function handleRecipientNo() {
+      const inv = appState.invites.find(i => i.id === activeRecipientInviteId);
+      if (inv) {
+        inv.rsvp = {
+          decision: 'NO',
+          respondedAt: Date.now()
+        };
+        inv.status = 'DECLINED';
+        saveState();
+
+        const senderWa = toWhatsAppInternational(inv.senderWhatsapp);
+        const declineText = `Hi ${inv.senderName}, a recipient responded "No" to your BlushRSVP invite "${inv.title}".`;
+        const declineBtn = document.getElementById('wa-decline-notify-btn');
+        if (declineBtn) declineBtn.href = `https://wa.me/${senderWa}?text=${encodeURIComponent(declineText)}`;
+      }
+
+      const arenaEl = document.getElementById('rec-decision-arena');
+      const declinedEl = document.getElementById('rec-declined-panel');
+      if (arenaEl) arenaEl.classList.add('hidden');
+      if (declinedEl) declinedEl.classList.remove('hidden');
+      showToast('Response recorded (no personal details collected).', 'pink');
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. PERMANENT FEEDBACK DASHBOARD
+    // -------------------------------------------------------------------------
+    function renderFeedbackDashboard() {
+      enforceInviteLifecycles();
+      const listEl = document.getElementById('feedback-invites-list');
+      if (!listEl) return;
+
+      const userInvites = appState.currentUser
+        ? appState.invites.filter(i => i.senderId === appState.currentUser.id)
+        : appState.invites;
+
+      if (userInvites.length === 0) {
+        listEl.innerHTML = `
+          <div class="glass-card rounded-3xl p-8 text-center md:col-span-2">
+            <p class="text-sm text-slate-600 mb-3">You haven't created any date or hangout invites yet.</p>
+            <button type="button" onclick="handleStartCreating()" class="px-5 py-2.5 rounded-xl bg-blush-600 text-white font-bold text-xs">Create Your First Invite</button>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = userInvites.map(inv => {
+        const statusBadge = inv.status === 'ACCEPTED'
+          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">ACCEPTED 💖</span>'
+          : inv.status === 'DECLINED'
+            ? '<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold">DECLINED</span>'
+            : inv.status === 'ARCHIVED'
+              ? '<span class="px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-bold">EVENT DATE PASSED</span>'
+              : '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">ACTIVE (24H LINK)</span>';
+
+        const rsvpDetails = (inv.rsvp && inv.rsvp.decision === 'YES')
+          ? `<div class="mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+              <div><strong>Guest:</strong> ${inv.rsvp.guestName} (${inv.rsvp.guestEmail})</div>
+              <div><strong>WhatsApp:</strong> ${inv.rsvp.guestWhatsapp} • <strong>Chosen Time:</strong> ${inv.rsvp.chosenTime}</div>
+            </div>`
+          : (inv.rsvp && inv.rsvp.decision === 'NO')
+            ? `<div class="mt-3 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800">Recipient declined (privacy protected—no email/number stored).</div>`
+            : `<div class="mt-3 text-xs text-slate-500">Awaiting recipient response...</div>`;
+
+        return `
+          <div class="glass-card rounded-3xl p-5 sm:p-6 shadow-card border border-blush-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${inv.emoji}</span>
+                <div>
+                  <h3 class="font-serif text-lg font-bold text-slate-900">${inv.title}</h3>
+                  <p class="text-xs text-slate-500">${inv.occasionName} • ${inv.eventDate} • ${inv.location}</p>
+                </div>
+              </div>
+              ${statusBadge}
+            </div>
+            ${rsvpDetails}
+            <div class="mt-4 pt-3 border-t border-blush-100 flex flex-wrap gap-2">
+              <button type="button" onclick="openRecipientView('${inv.id}')" class="px-3.5 py-2 rounded-xl bg-blush-50 hover:bg-blush-100 text-blush-700 font-bold text-xs">
+                Open Recipient Link
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // -------------------------------------------------------------------------
+    // 9. MASTER ADMIN DASHBOARD (NEXASTUDIO)
+    // -------------------------------------------------------------------------
+    function renderAdminDashboard() {
+      const statsEl = document.getElementById('admin-stats-grid');
+      const usersTbody = document.getElementById('admin-users-tbody');
+      const paymentsTbody = document.getElementById('admin-payments-tbody');
+
+      const totalRevenue = appState.payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      const activeUsers = appState.users.filter(u => hasActivePass(u)).length;
+
+      if (statsEl) {
+        statsEl.innerHTML = `
+          <div class="glass-card rounded-2xl p-4 border border-blush-200">
+            <div class="text-xs text-slate-500 font-semibold">Total Requestors</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1">${appState.users.length}</div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-blush-200">
+            <div class="text-xs text-slate-500 font-semibold">Active Passes</div>
+            <div class="text-2xl font-extrabold text-emerald-600 mt-1">${activeUsers}</div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-blush-200">
+            <div class="text-xs text-slate-500 font-semibold">PesaPal Revenue</div>
+            <div class="text-2xl font-extrabold text-blush-600 mt-1">${totalRevenue} SHS</div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border border-blush-200">
+            <div class="text-xs text-slate-500 font-semibold">Invites Created</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1">${appState.invites.length}</div>
+          </div>
+        `;
+      }
+
+      if (usersTbody) {
+        usersTbody.innerHTML = appState.users.map(u => {
+          const active = hasActivePass(u);
+          const expDate = u.expiresAt ? new Date(u.expiresAt).toLocaleDateString('en-KE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Expired';
+          const waIntl = toWhatsAppInternational(u.whatsapp);
+          const sharePasscodeMsg = `Hi ${u.name}, here are your BlushRSVP login details:\nEmail: ${u.email}\nPasscode: ${u.passcode}`;
+
+          return `
+            <tr class="hover:bg-blush-50/40">
+              <td class="py-3 px-3 font-bold text-slate-900">${u.name}</td>
+              <td class="py-3 px-3 text-xs text-slate-600">
+                <div>${u.whatsapp}</div>
+                <div class="text-slate-400">${u.email}</div>
+              </td>
+              <td class="py-3 px-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-1 rounded bg-slate-100 font-mono text-xs font-bold text-slate-800">${u.passcode}</span>
+                  <button type="button" onclick="copyUserPasscode('${u.passcode}')" class="px-2 py-1 rounded bg-blush-50 hover:bg-blush-100 text-blush-700 text-[11px] font-bold">Copy</button>
+                  <a href="https://wa.me/${waIntl}?text=${encodeURIComponent(sharePasscodeMsg)}" target="_blank" class="px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-bold">WhatsApp</a>
+                </div>
+              </td>
+              <td class="py-3 px-3 text-xs font-semibold">
+                <span class="px-2.5 py-1 rounded-full ${active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}">
+                  ${active ? u.planName : 'Inactive'}
+                </span>
+              </td>
+              <td class="py-3 px-3 text-xs text-slate-600">${expDate}</td>
+              <td class="py-3 px-3 text-right space-x-1">
+                <button type="button" onclick="adminGrantAccess('${u.id}', 'day')" class="px-2.5 py-1 rounded-lg bg-blush-100 hover:bg-blush-200 text-blush-800 text-[11px] font-bold">+1 Day</button>
+                <button type="button" onclick="adminGrantAccess('${u.id}', 'week')" class="px-2.5 py-1 rounded-lg bg-blush-500 hover:bg-blush-600 text-white text-[11px] font-bold">+1 Wk</button>
+                <button type="button" onclick="adminGrantAccess('${u.id}', 'month')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold">+1 Mo</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      if (paymentsTbody) {
+        paymentsTbody.innerHTML = appState.payments.map(p => `
+          <tr>
+            <td class="py-3 px-3 font-mono text-xs font-bold text-slate-700">${p.id}</td>
+            <td class="py-3 px-3 font-semibold text-slate-900">${p.userName}</td>
+            <td class="py-3 px-3 text-xs text-slate-600">${p.planName}</td>
+            <td class="py-3 px-3 text-xs text-slate-600">${p.method}</td>
+            <td class="py-3 px-3 font-bold text-emerald-700">${p.amount} SHS</td>
+            <td class="py-3 px-3 text-xs text-slate-500">${new Date(p.createdAt).toLocaleDateString('en-KE')}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function copyUserPasscode(code) {
+      const temp = document.createElement('input');
+      temp.value = code;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+      showToast(`Passcode "${code}" copied to clipboard!`, 'success');
+    }
+
+    function adminGrantAccess(userId, planKey) {
+      const user = appState.users.find(u => u.id === userId);
+      if (!user) return;
+      const durations = {
+        day: { ms: 24 * 60 * 60 * 1000, label: 'Day Pass (24 Hours)' },
+        week: { ms: 7 * 24 * 60 * 60 * 1000, label: 'Weekly Pass (7 Days)' },
+        month: { ms: 30 * 24 * 60 * 60 * 1000, label: 'Monthly Pass (30 Days)' }
+      };
+      const cfg = durations[planKey] || durations.day;
+      const base = Math.max(Date.now(), user.expiresAt || 0);
+      user.plan = planKey;
+      user.planName = cfg.label;
+      user.expiresAt = base + cfg.ms;
+      saveState();
+      renderAdminDashboard();
+      showToast(`Granted ${cfg.label} to ${user.name}!`, 'success');
+    }
+
+    function handleAdminCreateUser(e) {
+      e.preventDefault();
+      const name = document.getElementById('adm-new-name').value.trim();
+      const email = document.getElementById('adm-new-email').value.trim().toLowerCase();
+      const whatsapp = document.getElementById('adm-new-whatsapp').value.trim();
+      const passcode = document.getElementById('adm-new-passcode').value.trim();
+      const planKey = document.getElementById('adm-new-plan').value;
+
+      if (!name || !isValidCompleteEmail(email) || !isValidKenyanPhone(whatsapp) || !passcode) {
+        showToast('Fill all fields with a valid complete email and full Kenyan phone number.', 'error');
+        return;
+      }
+
+      const durations = {
+        day: { ms: 24 * 60 * 60 * 1000, label: 'Day Pass (24 Hours)' },
+        week: { ms: 7 * 24 * 60 * 60 * 1000, label: 'Weekly Pass (7 Days)' },
+        month: { ms: 30 * 24 * 60 * 60 * 1000, label: 'Monthly Pass (30 Days)' }
+      };
+      const cfg = durations[planKey] || durations.day;
+
+      const newUser = {
+        id: 'usr_' + Date.now(),
+        name,
+        email,
+        whatsapp,
+        passcode,
+        plan: planKey,
+        planName: cfg.label,
+        expiresAt: Date.now() + cfg.ms,
+        createdAt: Date.now()
+      };
+
+      appState.users.unshift(newUser);
+      saveState();
+      closeModal('modal-admin-create-user');
+      renderAdminDashboard();
+      showToast(`Account created for ${name} with passcode "${passcode}"!`, 'success');
+    }
+
+    // -------------------------------------------------------------------------
+    // 10. INITIALIZATION
+    // -------------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        enforceInviteLifecycles();
+        updateNavbar();
+        renderTemplateGrid();
+        renderCustomEmojiGrid();
+        renderColorSwatches();
+        renderPresetSlotsGrid();
+        initHomeDemoDodge();
+
+        const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const dateInp = document.getElementById('inp-date');
+        if (dateInp) {
+          dateInp.value = tomorrow.toISOString().slice(0, 10);
+        }
+        updateLivePreview();
+
+        const params = new URLSearchParams(window.location.search);
+        const inviteId = params.get('invite');
+        if (inviteId) {
+          openRecipientView(inviteId);
+        } else {
+          navigateTo('home');
+        }
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Initialization error:', err);
+      }
+    });
+  </script>
+</body>
+</html>
